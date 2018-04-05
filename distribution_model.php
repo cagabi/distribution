@@ -47,27 +47,27 @@ class Distribution {
     }
 
     /**
-     * Fetches the role and organization of the given user
+     * Fetches the role and organizationid of the given user
      * @param type $userid
-     * @return false if user not found or an asociative array('userid' => $userid, 'role' => $role', 'organization' => $organization)
+     * @return false if user not found or an asociative array('userid' => $userid, 'role' => $role', 'organizationid' => $organizationid)
      */
     public function get_user($userid) {
         $userid = (int) $userid;
-        $result = $this->mysqli->query("SELECT role, organization FROM distribution_users WHERE id='$userid'");
+        $result = $this->mysqli->query("SELECT role, organizationid FROM distribution_users WHERE id='$userid'");
         if ($result->num_rows > 0) {
             $row = $result->fetch_array();
-            return array('userid' => $userid, 'role' => $row['role'], 'organization' => $row['organization']);
+            return array('userid' => $userid, 'role' => $row['role'], 'organizationid' => $row['organizationid']);
         }
         else {
             if ($userid == 1)
-                return array('userid' => $userid, 'role' => 'administrator', 'organization' => '');
+                return array('userid' => $userid, 'role' => 'administrator', 'organizationid' => '');
             else
                 return false;
         }
     }
 
     /**
-     * Returns an array of organizations including the users and distribution points
+     * Returns an array of organization including the users and distribution points
      * @param int $userid
      * @return array of organizations (name and users)
      */
@@ -85,14 +85,14 @@ class Distribution {
     }
 
     /**
-     * Returns array of users for a given organization 
+     * Returns array of users for a given organizationid 
      * @param type $orgid
      * @return type
      */
     public function get_users($orgid) {
         $orgid =(int)$orgid;
         $users = array();
-        $result = $this->mysqli->query("SELECT id, role FROM distribution_users WHERE organization = $orgid");
+        $result = $this->mysqli->query("SELECT id, role FROM distribution_users WHERE organizationid = $orgid");
         while ($row = $result->fetch_array()) {
             $name = $this->user->get_username($row['id']);
             $users[] = ['id' => $row['id'], 'name' => $name, 'role' => $row['role']];
@@ -101,7 +101,7 @@ class Distribution {
     } 
     
     /**
-     * Returns array of distribution points for a given organization 
+     * Returns array of distribution points for a given organizationid 
      * @param type $orgid
      * @return type
      */
@@ -142,7 +142,7 @@ class Distribution {
     /**
      * Adds a new user to the database
      * @param tring $name
-     * @param string $organization
+     * @param integer $organizationid
      * @return integer id of the new user or an associative array in case of error: array('error' => "Error meassage")
      */
     public function create_user($name, $organizationid, $email, $password, $role) {
@@ -158,9 +158,9 @@ class Distribution {
         }
         else {
             $userid = $result['userid'];
-            $result = $this->mysqli->query("INSERT INTO distribution_users (id,role,organization) VALUES ('$userid','$role','$organizationid')");
+            $result = $this->mysqli->query("INSERT INTO distribution_users (id,role,organizationid) VALUES ('$userid','$role','$organizationid')");
             if ($this->mysqli->error != "" || $result == false) {
-                return array('error' => "There was a problem saving the organization in the database<br />" . $this->mysqli->error);
+                return array('error' => "There was a problem saving the user in the database<br />" . $this->mysqli->error);
             }
             return $userid;
         }
@@ -202,9 +202,9 @@ class Distribution {
     }
 
     /**
-     * Adds a new distribution point to the database for the given organization
+     * Adds a new distribution point to the database for the given organizationid
      * @param string $name
-     * @return integer id of the new organization or an associative array in case of error: array('error' => "Error meassage")
+     * @return integer id of the new organizationid or an associative array in case of error: array('error' => "Error meassage")
      */
     public function create_distribution_point($name, $orgid) {
         $name2 = preg_replace('/[^\w\s_-]/', '', $name);
@@ -216,7 +216,7 @@ class Distribution {
             return (array('error' => "Name already exists"));
         }
 
-        $result = $this->mysqli->query("INSERT INTO distribution_points (name, organizationid) VALUES ('$name','$orgid')");
+        $result = $this->mysqli->query("INSERT INTO distribution_points (name, organizationidid) VALUES ('$name','$orgid')");
         if ($this->mysqli->error != "" || $result == false) {
             return array('error' => "There was a problem saving the distribution point in the database<br />" . $this->mysqli->error);
         }
