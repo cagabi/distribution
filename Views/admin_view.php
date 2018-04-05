@@ -15,8 +15,9 @@ bind_textdomain_codeset($domain2, 'UTF-8');
         <div class="page-content" style="padding-top:15px">
             <h1>Admin - Organizations and users</h1>
             <div id="actions">
-                <div id="add_organization"><i class="icon-plus"></i>Add Organization</div>
-                <div id="add_user"><i class="icon-plus"></i>Add User</div>
+                <div id="add_organization"><i class="icon-plus"></i>Add organization</div>
+                <div id="add_user"><i class="icon-plus add-button"></i>Add user</div>
+                <div id="add_distribution_point"><i class="icon-plus add-button"></i>Add distribution point</div>
             </div>
             <div id="organizations"></div>
             <div class="alert alert-primary" id="no-org-message" role="alert">
@@ -59,13 +60,10 @@ MODALS
             <input id="add-user-name" type="text" maxlength="64">
         </p>
         <p>Organization:<br>
-            <select id="add-user-organizations"></select>
+            <select id="add-user-organizations" class="organizations-select"></select>
         </p>
         <p>Role:<br>
-            <select id="add-user-role">
-                <option value="administrator">Administrator</option>
-                <option value="prepvol">Prep volunteer</option>
-            </select>
+            <select id="add-user-role" class="roles-select"></select>
         </p>
         <p>Email:<br>
             <input id="add-user-email" type="email" maxlength="64">
@@ -84,16 +82,44 @@ MODALS
     </div>
 </div>
 
+<!-- Add distribution poin -->
+<div id="add-distribution-point-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="add-distribution-point-modal-label" aria-hidden="true" data-backdrop="static">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="add-distribution-point-modal-label">Add new distribution point</h3>
+    </div>
+    <div class="modal-body">
+        <p>Name:<br>
+            <input id="add-distribution-point-name" type="text" maxlength="64">
+        </p>
+        <p>Organization:<br>
+            <select id="add-distribution-point-organizations" class="organizations-select"></select>
+        </p>
+        <div class="alert alert-primary" id="add-distribution-point-message" role="alert"></div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button id="add-distribution-point-action" class="btn btn-primary">Add</button>
+    </div>
+</div>
 
 <script>
     var path = "<?php echo $path; ?>";
     var organizations = [];
     update_view();
-    $('table.users').hide();
 
     /**************************
      * Functions
      **************************/
+    /**
+     * Updates the view by laoding all the organizations, if there is none a message is displayed.
+     * If there are then: 
+     *   - display buttons to add distribution and users
+     *   - populate organizations selects in modals (.organizations-select)
+     *   - populate roles selects in modals (.roles-select)
+     *   - Draw organizations with its users and distributions
+     * @returns nothing to return
+     */
     function update_view() {
         $('#organizations').html('');
         organizations = distribution.list_organizations();
@@ -103,9 +129,37 @@ MODALS
         }
         else {
             $('#no-org-message').hide();
-            $('#add_user').show();
+
+            // Show "Add user", "Add distribution" and more if there are more
+            $('.add-button').show();
+
+            // Add organizations to selects
+            $('select.organizations-select').html('');
+            organizations.forEach(function (org) {
+                $('select.organizations-select').append('<option value="' + org.id + '">' + org.name + '</option>');
+            });
+            // Add roles to selects
+            $('select.roles-select').html('');
+            $('select.roles-select').append('<option value="administrator">Administrator</option>');
+            $('select.roles-select').append('<option value="prepvol">Prep volunteer</option>');
+
+            // Draw organizations
             organizations.forEach(function (org) {
                 var html = '<h2 class="organization" orgid="' + org.id + '" style="cursor:pointer"><i class="icon-chevron-down" style="margin-top:10px"></i> ' + org.name + '</h2>';
+                // Draw distribution points
+                html+= '<h3>Distribution points</h3>'
+                html += '<table class="distribution-points table" orgid="' + org.id + '">';
+                if (org.distribution_points.length == 0)
+                    html += '<tr><td colspan=3><div class="alert alert-primary"role="alert">There are no distribution points :(</div></td></tr>';
+                else {
+                    html += '<tr><th>Name</th><th></th></tr>';
+                    org.distribution_points.forEach(function (distr) {
+                        html += '<tr><td>' + distr.name + '</td><td>ToDo - delete and edit user</td></tr>';
+                    });
+                }
+                html += '</table>';
+                // Draw users
+                html+= '<h3>Users</h3>'
                 html += '<table class="users table" orgid="' + org.id + '">';
                 if (org.users.length == 0)
                     html += '<tr><td colspan=3><div class="alert alert-primary"role="alert">There are no users :(</div></td></tr>';
@@ -129,8 +183,14 @@ MODALS
         $('#add-organization-name').val('');
         $('#add-organization-message').hide();
         $('#add-organization-modal').modal('show');
-    }
-    );
+    });
+
+    $('#distribution').on('click', '#add_distribution_point', function () {
+        $('#add-distribution-point-name').val('');
+        $('#add-distribution-point-message').hide();
+        $('#add-distribution-point-modal').modal('show');
+    });
+
     $('#add-organization-action').on('click', function () {
         $('#add-organization-message').hide();
         var result = distribution.create_organization($('#add-organization-name').val());
@@ -141,15 +201,13 @@ MODALS
             update_view();
         }
     });
+
     $('#distribution').on('click', '#add_user', function () {
         $('#add-user-name').val('');
         $('#add-user-message').hide();
-        $('select#add-user-organizations').html('');
-        organizations.forEach(function (org) {
-            $('select#add-user-organizations').append('<option value="' + org.id + '">' + org.name + '</option>');
-        });
         $('#add-user-modal').modal('show');
     });
+
     $('#add-user-action').on('click', function () {
         if ($('#add-user-password').val() != $('#add-user-confirm-password').val())
             $('#add-user-message').html('Passwords don\'t match ').show();
@@ -161,8 +219,18 @@ MODALS
             else {
                 $('#add-user-modal').modal('hide');
                 update_view();
-                console.log('yeahhh  ' + result);
             }
+        }
+    });
+
+    $('#add-distribution-point-action').on('click', function () {
+        $('#add-distribution-point-message').hide();
+        var result = distribution.create_distribution_point($('#add-distribution-point-name').val(), $('#add-distribution-point-organizations').val());
+        if (result.error != undefined)
+            $('#add-distribution-point-message').html(result.error).show();
+        else {
+            $('#add-distribution-point-modal').modal('hide');
+            update_view();
         }
     });
 

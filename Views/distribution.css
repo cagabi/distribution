@@ -50,6 +50,13 @@ margin: 45px 25px 10px;
     border-bottom:1px solid grey;
 }
 
-table.users{
-    margin-top:-11px;
+table.users, table.distribution-points {
+    margin:-11px 25px 0 55px;
+}
+.alert{
+    margin-bottom:0
+}
+
+h3{
+    margin-left:50px
 }

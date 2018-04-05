@@ -46,6 +46,10 @@ function distribution_controller() {
             if ($distro_user['role'] == 'administrator')
                 $result = $distribution->create_user(get('name'), get('organizationid'), get('email'), post('password'), get('role'));
         }
+        if ($route->action == 'createdistributionpoint') {
+            if ($distro_user['role'] == 'administrator')
+                $result = $distribution->create_distribution_point(get('name'), get('organizationid'));
+        }
     }
 
     return array('content' => $result);

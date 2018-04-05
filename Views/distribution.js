@@ -21,6 +21,13 @@ var distribution = {
             }});
         return result;
     },
+    'create_distribution_point': function (name, organizationid) {
+        var result = {};
+        $.ajax({url: path + "distribution/createdistributionpoint.json?name=" + name + "&organizationid=" + organizationid, method: 'GET', dataType: 'json', async: false, success: function (data) {
+                result = data;
+            }});
+        return result;
+    },
 };
 
 /*********
