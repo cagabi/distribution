@@ -23,29 +23,28 @@ function distribution_controller() {
 
     $result = false;
 
-    $role = $distribution->get_role($session['userid']);
-    if ($role == 'prepvol') {
-        $organization = $distribution->get_organization($session['userid']);
-    }
+    $distro_user = $distribution->get_user($session['userid']);
 
     if ($route->format == 'html') {
-        if ($role == 'administrator') {
-            if ($route->action == 'admin') {
-                $orgs = $distribution->get_organizations_list($session['userid']);
+        if ($route->action == 'admin') {
+            if ($distro_user['role'] == 'administrator') {
+                $orgs = $distribution->get_organizations_list($distro_user['userid']);
                 $result = view("Modules/distribution/Views/admin_view.php", array('organizations' => $orgs));
             }
         }
     }
     else if ($route->format == 'json') {
-        if ($role == 'administrator') {
-            if ($route->action == "listorganizations")
-                $result = $distribution->get_organizations_list($session['userid']);
-            if ($route->action == 'createorganization') {
+        if ($route->action == "listorganizations") {
+            if ($distro_user['role'] == 'administrator')
+                $result = $distribution->get_organizations_list($distro_user['userid']);
+        }
+        if ($route->action == 'createorganization') {
+            if ($distro_user['role'] == 'administrator')
                 $result = $distribution->create_organization(get('name'));
-            }
-            if ($route->action == 'createuser') {
-                $result = $distribution->create_user(get('name'),get('organizationid'),get('email'),post('password'),get('role'));
-            }
+        }
+        if ($route->action == 'createuser') {
+            if ($distro_user['role'] == 'administrator')
+                $result = $distribution->create_user(get('name'), get('organizationid'), get('email'), post('password'), get('role'));
         }
     }
 

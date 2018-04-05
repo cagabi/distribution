@@ -23,14 +23,38 @@ class Distribution {
     }
 
     public function get_role($userid) {
+        $userid = (int) $userid;
         if ($userid == 1)
             return 'administrator';
         else {
-            $result = $this->mysqli->query("SELECT role FROM distribution_users WHERE id=?");
+            $result = $this->mysqli->query("SELECT role FROM distribution_users WHERE id='$userid'");
             if ($result->num_rows > 0) {
                 $row = $result->fetch_array();
                 return $row['role'];
             }
+            else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Fetches the role and organization of the given user
+     * @param type $userid
+     * @return false if user not found or an asociative array('userid' => $userid, 'role' => $role', 'organization' => $organization)
+     */
+    public function get_user($userid) {
+        $userid = (int) $userid;
+        $result = $this->mysqli->query("SELECT role, organization FROM distribution_users WHERE id='$userid'");
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_array();
+            return array('userid' => $userid, 'role' => $row['role'], 'organization' => $row['organization']);
+        }
+        else {
+            if ($userid == 1)
+                return array('userid' => $userid, 'role' => 'administrator', 'organization' => '');
+            else
+                return false;
         }
     }
 
