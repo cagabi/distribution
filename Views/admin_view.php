@@ -204,6 +204,10 @@ MODALS
 
     $('#distribution').on('click', '#add_user', function () {
         $('#add-user-name').val('');
+        $('#add-user-email').val('');
+        $('#add-user-password').val('');
+        $('#add-user-role').val('prepvol');
+        $('#add-user-confirm-password').val('');
         $('#add-user-message').hide();
         $('#add-user-modal').modal('show');
     });
