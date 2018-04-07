@@ -53,16 +53,15 @@ class Distribution {
      */
     public function get_user($userid) {
         $userid = (int) $userid;
+        if ($userid == 1)
+            return array('userid' => $userid, 'role' => 'administrator', 'organizationid' => '');
         $result = $this->mysqli->query("SELECT role, organizationid FROM distribution_users WHERE id='$userid'");
         if ($result->num_rows > 0) {
             $row = $result->fetch_array();
             return array('userid' => $userid, 'role' => $row['role'], 'organizationid' => $row['organizationid']);
         }
         else {
-            if ($userid == 1)
-                return array('userid' => $userid, 'role' => 'administrator', 'organizationid' => '');
-            else
-                return false;
+            return false;
         }
     }
 
@@ -90,7 +89,7 @@ class Distribution {
      * @return type
      */
     public function get_users($orgid) {
-        $orgid =(int)$orgid;
+        $orgid = (int) $orgid;
         $users = array();
         $result = $this->mysqli->query("SELECT id, role FROM distribution_users WHERE organizationid = $orgid");
         while ($row = $result->fetch_array()) {
@@ -98,15 +97,15 @@ class Distribution {
             $users[] = ['id' => $row['id'], 'name' => $name, 'role' => $row['role']];
         }
         return $users;
-    } 
-    
+    }
+
     /**
      * Returns array of distribution points for a given organizationid 
      * @param type $orgid
      * @return type
      */
     public function get_distribution_points($orgid) {
-        $orgid =(int)$orgid;
+        $orgid = (int) $orgid;
         $distribution_points = array();
         $result = $this->mysqli->query("SELECT id, name FROM distribution_points WHERE organizationid = '$orgid'");
         while ($row = $result->fetch_array()) {
