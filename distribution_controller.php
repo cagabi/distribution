@@ -23,8 +23,10 @@ function distribution_controller() {
 
     $result = false;
 
-    if ($session['admin'] == 1)
+    if ($session['admin'] == 1) {
         $role = Roles::SUPERADMINISTRATOR;
+        $organizationid = 0;
+    }
     else {
         $distro_user = $distribution->get_user($session['userid']);
         if (!$distro_user)
@@ -40,9 +42,11 @@ function distribution_controller() {
             }
         }
         if ($route->action == 'preparation') { // Everybody can get to the preparation page
-            //$orgs = $distribution->get_user_organizations($distro_user['userid']);
-            //$distro_points = $distribution->get_distribution_points($orgid);
-            $result = view("Modules/distribution/Views/preparation_view.php", array(/* 'distribution_point_id' => get('distribution_point_id'),'organization_id'=>$orgid */));
+            if ($role == Roles::SUPERADMINISTRATOR)
+                $orgs = $distribution->get_organizations();
+            if ($role == Roles::ADMINISTRATOR) {
+                $orgs = array($distribution->get_organization($organizationid)); //We put it in an array so it has the same structure than the one returned by $distribution->get_organizations()
+            }$result = view("Modules/distribution/Views/preparation_view.php", array('organizations' => $orgs, 'organizationid' => $organizationid));
         }
     }
     else if ($route->format == 'json') {
@@ -60,15 +64,33 @@ function distribution_controller() {
                 $result = $distribution->create_organization(get('name'));
         }
         if ($route->action == 'createuser') {
-            if ($role == Roles::SUPERADMINISTRATOR || ($role == Roles::ADMINISTRATOR && $distribution->user_is_in_organization($session['userid'],$organizationid)))
+            if ($role == Roles::SUPERADMINISTRATOR || ($role == Roles::ADMINISTRATOR && $distribution->user_is_in_organization($session['userid'], $organizationid)))
                 $result = $distribution->create_user(get('name'), get('organizationid'), get('email'), post('password'), get('role'));
         }
         if ($route->action == 'createdistributionpoint') {
-            if ($role == Roles::SUPERADMINISTRATOR || ($role == Roles::ADMINISTRATOR && $distribution->user_is_in_organization($session['userid'],$organizationid)))
+            if ($role == Roles::SUPERADMINISTRATOR || ($role == Roles::ADMINISTRATOR && $distribution->user_is_in_organization($session['userid'], $organizationid)))
                 $result = $distribution->create_distribution_point(get('name'), get('organizationid'));
         }
         if ($route->action == 'getitems') {
             $result = $distribution->get_items();
+        }
+        
+        // Distribution preparation
+        $distributionid = get('distributionid');
+        $organizationid = $distribution->get_distribution_organization($distributionid);
+        if ($role == Roles::SUPERADMINISTRATOR || $distribution->user_is_in_organization($session['userid'], $organizationid)) {
+            if ($route->action == 'getyesterdaypreparation') {
+                    $result = $distribution->get_yesterday_preparation($distributionid);
+            }
+            if ($route->action == 'savereturneditem') {
+                    $result = $distribution->save_returned_item(get('value'), get('itemid'), get('distributionid'));
+            }
+            if ($route->action == 'savegoingoutitem') {
+                $result = $distribution->save_going_out_item(get('value'), get('itemid'), get('distributionid'));
+            }
+            if ($route->action == 'gettodaypreparation') {
+                $result = $distribution->get_today_preparation(get('distributionid'));
+            }
         }
     }
 

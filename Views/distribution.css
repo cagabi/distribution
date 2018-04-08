@@ -60,3 +60,22 @@ table.users, table.distribution-points {
 h3{
     margin-left:50px
 }
+
+#preparation .distribution-point{
+    border:1px solid grey;
+    width:200px;
+    text-align:center;
+    padding:20px;
+    font-size:25px;
+    margin:25px;
+    background:#d2d3d4;
+    cursor:pointer;
+}
+
+#preparation table{
+    max-width:600px;
+}
+
+#preparation input[type=number]{
+    width:50px;
+}

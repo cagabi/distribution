@@ -260,4 +260,97 @@ class Distribution {
             return false;
     }
 
+    public function get_distribution_organization($distributionid) {
+        $distributionid = (int) $distributionid;
+        $result = $this->mysqli->query("SELECT organizationid FROM distribution_points WHERE id='$distributionid'");
+        if ($row = $result->fetch_array())
+            return $row['organizationid'];
+        else
+            return false;
+    }
+
+    public function save_returned_item($value, $itemid, $distributionid) {
+        $value = (int) $value;
+        $itemid = (int) $itemid;
+        $distributionid = (int) $distributionid;
+
+        // Save in database
+        $date = date('Y-m-d', time() - 24 * 60 * 60); // we save it in yesterday's record
+        $result = $this->mysqli->query("SELECT * FROM distribution_preparation WHERE itemid='$itemid' and distribution_point_id='$distributionid' and date='$date'");
+        if ($row_preparation = $result->fetch_array())
+            $result = $this->mysqli->query("UPDATE distribution_preparation SET quantity_returned='$value' WHERE itemid='$itemid' and distribution_point_id='$distributionid' and date='$date'");
+        else
+            $result = $this->mysqli->query("INSERT INTO distribution_preparation (quantity_returned, itemid, distribution_point_id, date)VALUES ('$value', '$itemid', '$distributionid', '$date')");
+        if (result === false)
+            return false;
+
+        // Save how many have been distributed
+        $quantity_given = $row_preparation['quantity_out'] - $value;
+        return $this->save_quantity_distributed_yesterday($quantity_given, $itemid, $distributionid);
+    }
+
+    public function save_going_out_item($value, $itemid, $distributionid) {
+        $value = (int) $value;
+        $itemid = (int) $itemid;
+        $distributionid = (int) $distributionid;
+
+        // Save in database
+        $date = date('Y-m-d', time());
+        $result = $this->mysqli->query("SELECT * FROM distribution_preparation WHERE itemid='$itemid' and distribution_point_id='$distributionid' and date='$date'");
+        if ($result->num_rows > 0)
+            $result = $this->mysqli->query("UPDATE distribution_preparation SET quantity_out='$value' WHERE itemid='$itemid' and distribution_point_id='$distributionid' and date='$date'");
+        else
+            $result = $this->mysqli->query("INSERT INTO distribution_preparation (quantity_out, itemid, distribution_point_id, date)VALUES ('$value', '$itemid', '$distributionid', '$date')");
+        return $result;
+    }
+
+    /**
+     * Saves the amount of items distributed
+     * @param integer $quantity_given
+     * @param integer $itemid
+     * @param integer $distributionid
+     * @return false if data was not saved otherwise the number of itmes distributed
+     */
+    public function save_quantity_distributed_yesterday($quantity_given, $itemid, $distributionid) {
+        $quantity_given = (int) $quantity_given;
+        $itemid = (int) $itemid;
+        $distributionid = (int) $distributionid;
+
+        // Save in database
+        $date = date('Y-m-d', time() - 24 * 60 * 60);
+        $result = $this->mysqli->query("SELECT * FROM distribution_distributions WHERE itemid='$itemid' and distribution_point_id='$distributionid' and date='$date'");
+        if ($result->num_rows > 0)
+            $result = $this->mysqli->query("UPDATE distribution_distributions SET quantity='$quantity_given' WHERE itemid='$itemid' and distribution_point_id='$distributionid' and date='$date'");
+        else
+            $result = $this->mysqli->query("INSERT INTO distribution_distributions (quantity, itemid, distribution_point_id, date)VALUES ('$quantity_given', '$itemid', '$distributionid', '$date')");
+        if ($result === false)
+            return false;
+        else
+            return $quantity_given;
+    }
+
+    public function get_yesterday_preparation($distributionid) {
+        $distributionid = (int) $distributionid;
+        $yesterday = date('Y-m-d', time() - 24 * 60 * 60);
+        $items = $this->get_preparation($yesterday, $distributionid);
+        return $items;
+    }
+
+    public function get_today_preparation($distributionid) {
+        $distributionid = (int) $distributionid;
+        $today = date('Y-m-d', time());
+        $items = $this->get_preparation($today, $distributionid);
+        return $items;
+    }
+
+    public function get_preparation($date, $distributionid) {
+        $distributionid = (int) $distributionid;
+        $date= preg_replace('/[^\w-]/', '', $date);
+        $items=array();
+        $result = $this->mysqli->query("SELECT itemid, quantity_out, quantity_returned FROM distribution_preparation WHERE date='$date' and distribution_point_id = '$distributionid'");
+        while ($row = $result->fetch_array())
+            $items[] = array('itemid' => $row['itemid'], 'quantity_out' => $row['quantity_out'], 'quantity_returned' => $row['quantity_returned']);
+        return $items;
+    }
+
 }

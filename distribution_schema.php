@@ -24,3 +24,10 @@ $schema['distribution_distributions'] = array(
     'quantity' => array('type' => 'int(11)'),
     'distribution_point_id' => array('type' => 'int(11)', 'Index'=> true),
 );
+$schema['distribution_preparation'] = array(
+    'date' => array('type' => 'date', 'Null'=>false, 'Index'=> true),
+    'itemid' => array('type' => 'int(11)', 'Index'=> true),
+    'distribution_point_id' => array('type' => 'int(11)', 'Index'=> true),
+    'quantity_out' => array('type' => 'int(11)'),
+    'quantity_returned' => array('type' => 'int(11)','Null'=>true), 
+);

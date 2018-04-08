@@ -27,22 +27,50 @@ var distribution = {
                 result = data;
             }});
         return result;
-    },    
+    },
     'get_items': function () {
         var result = {};
         $.ajax({url: path + "distribution/getitems.json", dataType: 'json', async: false, success: function (data) {
-                var items={regular:[], non_regular:[]}
-                data.forEach(function(item){
-                    if (item.regular !=='0')
-                        items.regular.push(item);
-                    else
-                        items.non_regular.push(item);
-                }); 
+                var items = {regular: {}, non_regular: {}}
+                data.forEach(function (item) {
+                        items[item.id] = item;
+                });
                 result = items;
-                console.log(items)
             }});
         return result;
     },
+    'get_yesterday_preparation': function (distributionid) {
+        var result = {};
+        $.ajax({url: path + "distribution/getyesterdaypreparation.json?distributionid=" + distributionid, dataType: 'json', async: false, success: function (data) {
+                result = data;
+            }});
+        return result;
+    },
+    'save_returned_item':function(value,itemid,distributionid){
+        var result = {};
+        $.ajax({url: path + "distribution/savereturneditem.json?value="+value+"&itemid="+itemid+"&distributionid=" + distributionid, dataType: 'json', async: false, success: function (data) {
+                result = data;
+            }});
+        return result;
+    },
+    'save_going_out_item':function(value,itemid,distributionid){
+        var result = {};
+        $.ajax({url: path + "distribution/savegoingoutitem.json?value="+value+"&itemid="+itemid+"&distributionid=" + distributionid, dataType: 'json', async: false, success: function (data) {
+                result = data;
+            }});
+        return result;
+    },
+    'get_today_preparation':function(distributionid){
+         var result = {};
+        $.ajax({url: path + "distribution/gettodaypreparation.json?&distributionid=" + distributionid, dataType: 'json', async: false, success: function (data) {
+                var items = {};
+                data.forEach(function (item) {
+                        items[item.itemid] = item;
+                });
+                result = items;
+            }});
+        return result;
+    }
 };
 
 /*********
