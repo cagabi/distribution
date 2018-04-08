@@ -117,8 +117,9 @@ MODALS
         // ToDo
 
         // trigger auto-update
-        // ToDo
-        // update_preparation();
+        setInterval(function () {
+            update_preparation();
+        }, 2000);
 
         $('#step1').hide();
         $('#step2').show();
@@ -140,8 +141,17 @@ MODALS
      * Functions
      ***************/
     function update_preparation() {
-        items = distribution.get_items(); // update the list of itmes in case somebody has added one in the meantime
-        //today = distribution.get_preparation_today(distributionid);
+        var items = distribution.get_items(); // update the list of itmes in case somebody has added one in the meantime
+        var yesterday_preparation = distribution.get_yesterday_preparation(distributionid);
+        var today_preparation = distribution.get_today_preparation(distributionid);
+        for (var item in yesterday_preparation) {
+            if (yesterday_preparation[item].quantity_returned != $('[source="yesterday-returned-item"][itemid="' + yesterday_preparation[item].itemid + '"]').val())
+                $('[source="yesterday-returned-item"][itemid="' + yesterday_preparation[item].itemid + '"]').val(yesterday_preparation[item].quantity_returned);
+        }
+        for (var item in today_preparation) {
+            if (today_preparation[item].quantity_out != $('[source="today-preparation-item"][itemid="' + today_preparation[item].itemid + '"]').val())
+                $('[source="today-preparation-item"][itemid="' + today_preparation[item].itemid + '"]').val(today_preparation[item].quantity_out);
+        }
     }
 
     /*
