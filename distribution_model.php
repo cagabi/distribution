@@ -13,8 +13,9 @@ defined('EMONCMS_EXEC') or die('Restricted access');
 
 class Roles {
 
-    const ADMINISTRATOR = 'administrator';
-    const PREPVOL = 'prepvol';
+    const SUPERADMINISTRATOR = 'superadministrator'; // has access to all the organizations
+    const ADMINISTRATOR = 'administrator'; // has only access to it's own organization
+    const PREPVOL = 'prepvol'; // has only got access to preparation
 
     // If adding a new role remember to add it to the validation in create_user
 }
@@ -66,19 +67,15 @@ class Distribution {
     }
 
     /**
-     * Returns an array of organization including the users and distribution points
+     * Returns an array with all the organization including the users and distribution points
      * @param int $userid
      * @return array of organizations (name and users)
      */
-    public function get_organizations_list($userid) {
+    public function get_organizations() {
         $orgs = array();
         $result = $this->mysqli->query('SELECT * FROM distribution_organizations');
         while ($row = $result->fetch_array()) {
-            $orgs[] = ['id' => $row['id'], 'name' => $row['name']];
-        }
-        foreach ($orgs as &$org) {
-            $org['users'] = $this->get_users($org['id']);
-            $org['distribution_points'] = $this->get_distribution_points($org['id']);
+            $orgs[] = $this->get_organization($row['id']);
         }
         return $orgs;
     }
@@ -233,6 +230,34 @@ class Distribution {
         else {
             return false;
         }
+    }
+
+    public function get_items() {
+        $result = $this->mysqli->query('SELECT id, name, regular FROM distribution_items');
+        $items = array();
+        while ($row = $result->fetch_array()) {
+            $items[] = array('id' => $row['id'], 'name' => $row['name'], 'regular' => $row['regular']);
+        }
+        return $items;
+    }
+
+    public function get_organization($orgid) {
+        $org = array();
+        $org['id'] = $orgid;
+        $org['name'] = $this->get_organization_name($orgid);
+        $org['users'] = $this->get_users($org['id']);
+        $org['distribution_points'] = $this->get_distribution_points($org['id']);
+        return $org;
+    }
+
+    public function user_is_in_organization($userid, $orgid) {
+        $userid = (int) $userid;
+        $orgid = (int) $orgid;
+        $result = $this->mysqli->query("SELECT * FROM distribution_users WHERE id = '$userid' AND organizationid='$orgid'");
+        if ($result->num_rows > 0)
+            return true;
+        else
+            return false;
     }
 
 }

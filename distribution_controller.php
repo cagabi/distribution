@@ -23,32 +23,52 @@ function distribution_controller() {
 
     $result = false;
 
-    $distro_user = $distribution->get_user($session['userid']);
+    if ($session['admin'] == 1)
+        $role = Roles::SUPERADMINISTRATOR;
+    else {
+        $distro_user = $distribution->get_user($session['userid']);
+        if (!$distro_user)
+            return array('content' => false);
+        $role = $distro_user['role'];
+        $organizationid = $distro_user['organizationid'];
+    }
 
     if ($route->format == 'html') {
         if ($route->action == 'admin') {
-            if ($distro_user['role'] == 'administrator') {
-                $orgs = $distribution->get_organizations_list($distro_user['userid']);
-                $result = view("Modules/distribution/Views/admin_view.php", array('organizations' => $orgs));
+            if ($role == Roles::SUPERADMINISTRATOR || $role == Roles::ADMINISTRATOR) {
+                $result = view("Modules/distribution/Views/admin_view.php", array());
             }
+        }
+        if ($route->action == 'preparation') { // Everybody can get to the preparation page
+            //$orgs = $distribution->get_user_organizations($distro_user['userid']);
+            //$distro_points = $distribution->get_distribution_points($orgid);
+            $result = view("Modules/distribution/Views/preparation_view.php", array(/* 'distribution_point_id' => get('distribution_point_id'),'organization_id'=>$orgid */));
         }
     }
     else if ($route->format == 'json') {
         if ($route->action == "listorganizations") {
-            if ($distro_user['role'] == 'administrator')
-                $result = $distribution->get_organizations_list($distro_user['userid']);
+            if ($role == Roles::SUPERADMINISTRATOR)
+                $result = $distribution->get_organizations();
+            if ($role == Roles::ADMINISTRATOR) {
+                $org = $distribution->get_organization($organizationid);
+                $result = array($org);
+            }
         }
+        // Carry on here
         if ($route->action == 'createorganization') {
-            if ($distro_user['role'] == 'administrator')
+            if ($role == Roles::SUPERADMINISTRATOR || $role == Roles::ADMINISTRATOR)
                 $result = $distribution->create_organization(get('name'));
         }
         if ($route->action == 'createuser') {
-            if ($distro_user['role'] == 'administrator')
+            if ($role == Roles::SUPERADMINISTRATOR || ($role == Roles::ADMINISTRATOR && $distribution->user_is_in_organization($session['userid'],$organizationid)))
                 $result = $distribution->create_user(get('name'), get('organizationid'), get('email'), post('password'), get('role'));
         }
         if ($route->action == 'createdistributionpoint') {
-            if ($distro_user['role'] == 'administrator')
+            if ($role == Roles::SUPERADMINISTRATOR || ($role == Roles::ADMINISTRATOR && $distribution->user_is_in_organization($session['userid'],$organizationid)))
                 $result = $distribution->create_distribution_point(get('name'), get('organizationid'));
+        }
+        if ($route->action == 'getitems') {
+            $result = $distribution->get_items();
         }
     }
 

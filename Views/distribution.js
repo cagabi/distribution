@@ -27,6 +27,21 @@ var distribution = {
                 result = data;
             }});
         return result;
+    },    
+    'get_items': function () {
+        var result = {};
+        $.ajax({url: path + "distribution/getitems.json", dataType: 'json', async: false, success: function (data) {
+                var items={regular:[], non_regular:[]}
+                data.forEach(function(item){
+                    if (item.regular !=='0')
+                        items.regular.push(item);
+                    else
+                        items.non_regular.push(item);
+                }); 
+                result = items;
+                console.log(items)
+            }});
+        return result;
     },
 };
 
