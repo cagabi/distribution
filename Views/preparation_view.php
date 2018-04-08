@@ -22,7 +22,7 @@ bind_textdomain_codeset($domain2, 'UTF-8');
                 <table id="preparation-regular-items" class="table">
                     <tr><th>Item</th><th>Out yesterday</th><th>Returned from yesterday</th><th>Out today</th></tr>
                 </table>
-                <h3>Non-regular items</h3>
+                <h3>Non-regular items <button class="btn"style="margin-left:105px">Add non-regular item (ToDo)</button></h3>
                 <table id="preparation-non-regular-items" class="table">
                     <tr><th>Item</th><th>Out yesterday</th><th>Returned from yesterday</th><th>Out today</th></tr>
                 </table>
@@ -104,11 +104,11 @@ MODALS
             var html = '<tr itemid=' + itemid + '>';
             html += '<td>' + items[itemid].name + '</td>';
             html += '<td>' + yesterday[item].quantity_out + '</td>';
-            html += '<td><input type="number" source="yesterday-returned-item" itemid=' + itemid + ' value=' + yesterday[item].quantity_returned + ' /></td>';
+            html += '<td><input type="number" source="yesterday-returned-item" itemid=' + itemid + ' min=0 value=' + yesterday[item].quantity_returned + ' /></td>';
             if (today_prep[itemid] == undefined)
-                html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' value="" /></td>';
+                html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' min=0 value="" /></td>';
             else
-                html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' value=' + today_prep[itemid].quantity_out + ' /></td>';
+                html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' min=0 value=' + today_prep[itemid].quantity_out + ' /></td>';
             html += '</tr>';
             $('#preparation-' + type + '-items').append(html);
         }
