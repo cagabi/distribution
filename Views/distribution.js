@@ -33,7 +33,7 @@ var distribution = {
         $.ajax({url: path + "distribution/getitems.json", dataType: 'json', async: false, success: function (data) {
                 var items = {regular: {}, non_regular: {}}
                 data.forEach(function (item) {
-                        items[item.id] = item;
+                    items[item.id] = item;
                 });
                 result = items;
             }});
@@ -46,28 +46,36 @@ var distribution = {
             }});
         return result;
     },
-    'save_returned_item':function(value,itemid,distributionid){
+    'save_returned_item': function (value, itemid, distributionid) {
         var result = {};
-        $.ajax({url: path + "distribution/savereturneditem.json?value="+value+"&itemid="+itemid+"&distributionid=" + distributionid, dataType: 'json', async: false, success: function (data) {
+        $.ajax({url: path + "distribution/savereturneditem.json?value=" + value + "&itemid=" + itemid + "&distributionid=" + distributionid, dataType: 'json', async: false, success: function (data) {
                 result = data;
             }});
         return result;
     },
-    'save_going_out_item':function(value,itemid,distributionid){
+    'save_going_out_item': function (value, itemid, distributionid) {
         var result = {};
-        $.ajax({url: path + "distribution/savegoingoutitem.json?value="+value+"&itemid="+itemid+"&distributionid=" + distributionid, dataType: 'json', async: false, success: function (data) {
+        $.ajax({url: path + "distribution/savegoingoutitem.json?value=" + value + "&itemid=" + itemid + "&distributionid=" + distributionid, dataType: 'json', async: false, success: function (data) {
                 result = data;
             }});
         return result;
     },
-    'get_today_preparation':function(distributionid){
-         var result = {};
+    'get_today_preparation': function (distributionid) {
+        var result = {};
         $.ajax({url: path + "distribution/gettodaypreparation.json?&distributionid=" + distributionid, dataType: 'json', async: false, success: function (data) {
                 var items = {};
                 data.forEach(function (item) {
-                        items[item.itemid] = item;
+                    items[item.itemid] = item;
                 });
                 result = items;
+            }});
+        return result;
+    },
+    'token_login': function (day_token) {
+        var result = {};
+        $.ajax({url: path + "distribution/tokenlogin.html", data: '&day_token=' + day_token + '', method: 'post', dataType: 'text', async: false, success: function (data) {
+                console.log(data.responseText)
+                result = data;
             }});
         return result;
     }

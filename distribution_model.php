@@ -16,6 +16,7 @@ class Roles {
     const SUPERADMINISTRATOR = 'superadministrator'; // has access to all the organizations
     const ADMINISTRATOR = 'administrator'; // has only access to it's own organization
     const PREPVOL = 'prepvol'; // has only got access to preparation
+    const DAYVOL='dayvol'; // has access through day token and has only got access to preparation
 
     // If adding a new role remember to add it to the validation in create_user
 }
@@ -53,9 +54,10 @@ class Distribution {
      * @return false if user not found or an asociative array('userid' => $userid, 'role' => $role', 'organizationid' => $organizationid)
      */
     public function get_user($userid) {
+        global $session;
         $userid = (int) $userid;
-        if ($userid == 1)
-            return array('userid' => $userid, 'role' => 'administrator', 'organizationid' => '');
+        if ($session['admin'] == 1)
+            return array('userid' => $userid, 'role' => Roles::SUPERADMINISTRATOR, 'organizationid' => '');
         $result = $this->mysqli->query("SELECT role, organizationid FROM distribution_users WHERE id='$userid'");
         if ($result->num_rows > 0) {
             $row = $result->fetch_array();
@@ -345,12 +347,21 @@ class Distribution {
 
     public function get_preparation($date, $distributionid) {
         $distributionid = (int) $distributionid;
-        $date= preg_replace('/[^\w-]/', '', $date);
-        $items=array();
+        $date = preg_replace('/[^\w-]/', '', $date);
+        $items = array();
         $result = $this->mysqli->query("SELECT itemid, quantity_out, quantity_returned FROM distribution_preparation WHERE date='$date' and distribution_point_id = '$distributionid'");
         while ($row = $result->fetch_array())
             $items[] = array('itemid' => $row['itemid'], 'quantity_out' => $row['quantity_out'], 'quantity_returned' => $row['quantity_returned']);
         return $items;
+    }
+
+    public function get_day_token() {
+        global $path, $distribution_token_salt;
+        if (!isset($distribution_token_salt))
+            return array('error' => '<p style="margin:50px; font-size:25px">Day token cannot be generated, $distribution_token_salt is missing in settings.php.</p><p style="margin:50px; font-size:25px"> Tell your system administrator</p>');
+        $date = date('Y-m-d');
+        $token = hash('sha256', $date . $distribution_token_salt);
+        return substr($token, 0, 6);
     }
 
 }
