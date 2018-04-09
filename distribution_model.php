@@ -16,7 +16,7 @@ class Roles {
     const SUPERADMINISTRATOR = 'superadministrator'; // has access to all the organizations
     const ADMINISTRATOR = 'administrator'; // has only access to it's own organization
     const PREPVOL = 'prepvol'; // has only got access to preparation
-    const DAYVOL='dayvol'; // has access through day token and has only got access to preparation
+    const DAYVOL = 'dayvol'; // has access through day token and has only got access to preparation
 
     // If adding a new role remember to add it to the validation in create_user
 }
@@ -362,6 +362,20 @@ class Distribution {
         $date = date('Y-m-d');
         $token = hash('sha256', $date . $distribution_token_salt);
         return substr($token, 0, 6);
+    }
+
+    public function get_last_week_preparation($distributionid) {
+        $distributionid = (int) $distributionid;
+        $start_date = date('Y-m-d', time() - 7 * 24 * 60 * 60);
+        $end_date = date('Y-m-d', time());
+        $distribution = array();
+        $result = $this->mysqli->query("SELECT itemid, quantity, date FROM distribution_distributions WHERE date between '$start_date' and '$end_date' and distribution_point_id = '$distributionid'");
+        while ($row = $result->fetch_array()) {
+            if (!isset($distribution[$row['date']]))
+                $distribution[$row['date']] = array();
+            $distribution[$row['date']][] = array('itemid' => $row['itemid'], 'quantity' => $row['quantity']);
+        }
+        return $distribution;
     }
 
 }

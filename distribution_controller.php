@@ -36,7 +36,7 @@ function distribution_controller() {
                     $_SESSION['write'] = 1;
                     $_SESSION['admin'] = 0;
                     $_SESSION['distribution_day_access'] = true;
-                    
+
                     $result = view("Modules/distribution/Views/preparation_view.php", array('organizations' => $orgs, 'organizationid' => $organizationid));
                     return array('content' => $result);
                 }
@@ -54,7 +54,7 @@ function distribution_controller() {
         $role = Roles::SUPERADMINISTRATOR;
         $organizationid = 0;
     }
-    else if (isset ($_SESSION['distribution_day_access']) && $_SESSION['distribution_day_access'] == true) {
+    else if (isset($_SESSION['distribution_day_access']) && $_SESSION['distribution_day_access'] == true) {
         $role = Roles::DAYVOL;
         $organizationid = 0;
     }
@@ -73,10 +73,10 @@ function distribution_controller() {
             }
         }
         if ($route->action == 'preparation') { // Everybody can get to the preparation page
-            if ($role == Roles::SUPERADMINISTRATOR || $role == Roles::DAYVOL){
+            if ($role == Roles::SUPERADMINISTRATOR || $role == Roles::DAYVOL) {
                 $orgs = $distribution->get_organizations();
             }
-            if ($role == Roles::ADMINISTRATOR) {
+            else {
                 $orgs = array($distribution->get_organization($organizationid)); //We put it in an array so it has the same structure than the one returned by $distribution->get_organizations()
             }
             $result = view("Modules/distribution/Views/preparation_view.php", array('organizations' => $orgs, 'organizationid' => $organizationid));
@@ -132,6 +132,9 @@ function distribution_controller() {
             if ($route->action == 'gettodaypreparation') {
                 $result = $distribution->get_today_preparation(get('distributionid'));
             }
+            if ($route->action == 'getlastweekpreparation') {
+                $result = $distribution->get_last_week_preparation(get('distributionid'));
+            }            
         }
     }
 

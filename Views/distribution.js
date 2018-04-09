@@ -74,8 +74,20 @@ var distribution = {
     'token_login': function (day_token) {
         var result = {};
         $.ajax({url: path + "distribution/tokenlogin.html", data: '&day_token=' + day_token + '', method: 'post', dataType: 'text', async: false, success: function (data) {
-                console.log(data.responseText)
                 result = data;
+            }});
+        return result;
+    },
+    'get_last_week_preparation': function (distributionid) {
+        var result = {};
+        $.ajax({url: path + "distribution/getlastweekpreparation.json?distributionid=" + distributionid + "", dataType: 'text', async: false, success: function (data) {
+                var last_week_preparation = JSON.parse(data);
+                for (var date in last_week_preparation){
+                    result[date]={};
+                    last_week_preparation[date].forEach(function(item){
+                        result[date][item.itemid]=item;
+                    });
+                }
             }});
         return result;
     }

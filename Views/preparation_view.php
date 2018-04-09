@@ -28,7 +28,7 @@ bind_textdomain_codeset($domain2, 'UTF-8');
                 </table>
                 <div id="last-week-distribution">
                     <h3>Last week distribution</h3>
-                    <p>ToDo</p>
+                    <table id="last-week-distribution" class="table"></table>
                 </div>
             </div>
 
@@ -67,6 +67,7 @@ MODALS
     var organizations = <?php echo json_encode($args['organizations']) ?>;
     var distributionid = 0; // Used on step 2
     var today_preparation = {}; // Used on step 2
+    var last_week_preparation = [];
 
     // Add distribution points
     organizations.forEach(function (org) {
@@ -141,17 +142,48 @@ MODALS
      * Functions
      ***************/
     function update_preparation() {
+        // Fetch data
         var items = distribution.get_items(); // update the list of itmes in case somebody has added one in the meantime
         var yesterday_preparation = distribution.get_yesterday_preparation(distributionid);
         var today_preparation = distribution.get_today_preparation(distributionid);
+        var last_week_preparation = distribution.get_last_week_preparation(distributionid);
+        var last_week_items = [];
+        for (var date in last_week_preparation) {
+            for (var itemid in last_week_preparation[date])
+                if (last_week_items.indexOf(itemid) == -1) {
+                    last_week_items.push(itemid);
+                }
+        }
+
+        // Update view yesterday_preparation
         for (var item in yesterday_preparation) {
             if (yesterday_preparation[item].quantity_returned != $('[source="yesterday-returned-item"][itemid="' + yesterday_preparation[item].itemid + '"]').val())
                 $('[source="yesterday-returned-item"][itemid="' + yesterday_preparation[item].itemid + '"]').val(yesterday_preparation[item].quantity_returned);
         }
+        // Update view today preparatioin
         for (var item in today_preparation) {
             if (today_preparation[item].quantity_out != $('[source="today-preparation-item"][itemid="' + today_preparation[item].itemid + '"]').val())
                 $('[source="today-preparation-item"][itemid="' + today_preparation[item].itemid + '"]').val(today_preparation[item].quantity_out);
         }
+
+        // Update view last week distribution
+        var html = '<tr><th></th>';
+        for (var date in last_week_preparation) {
+            html += '<th>' + date + '</th>';
+        }
+        html += '</tr>';
+        last_week_items.forEach(function (itemid) {
+            html += '<tr><td>' + items[itemid].name + '</td>';
+            for (var date in last_week_preparation) {
+                if (last_week_preparation[date][itemid] == undefined)
+                    html += '<td>0</td>';
+                else
+                    html += '<td>' + last_week_preparation[date][itemid].quantity + '</td>';
+            }
+            html += '</tr>';
+        });
+        $('table#last-week-distribution').html(html);
+        console.log(html)
     }
 
     /*
