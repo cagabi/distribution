@@ -214,7 +214,7 @@ class Distribution {
             return (array('error' => "Name already exists"));
         }
 
-        $result = $this->mysqli->query("INSERT INTO distribution_points (name, organizationidid) VALUES ('$name','$orgid')");
+        $result = $this->mysqli->query("INSERT INTO distribution_points (name, organizationid) VALUES ('$name','$orgid')");
         if ($this->mysqli->error != "" || $result == false) {
             return array('error' => "There was a problem saving the distribution point in the database<br />" . $this->mysqli->error);
         }
