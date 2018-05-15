@@ -13,7 +13,7 @@ bind_textdomain_codeset($domain2, 'UTF-8');
 <div id="distribution">
     <div id="wrapper">
         <div class="page-content" style="padding-top:15px">
-            <h1>Admin - Organizations and users</h1>
+            <h1>Admin - Organizations, distribution points and users</h1>
             <div id="actions">
                 <div id="add_organization"><i class="icon-plus"></i>Add organization</div>
                 <div id="add_user"><i class="icon-plus add-button"></i>Add user</div>
@@ -147,8 +147,9 @@ MODALS
             organizations.forEach(function (org) {
                 var html = '<h2 class="organization" orgid="' + org.id + '" style="cursor:pointer"><i class="icon-chevron-down" style="margin-top:10px"></i> ' + org.name + '</h2>';
                 // Draw distribution points
-                html+= '<h3>Distribution points</h3>'
-                html += '<table class="distribution-points table" orgid="' + org.id + '">';
+                html += '<div orgid="' + org.id + '">';
+                html += '<h3>Distribution points</h3>'
+                html += '<table class="distribution-points table">';
                 if (org.distribution_points.length == 0)
                     html += '<tr><td colspan=3><div class="alert alert-primary"role="alert">There are no distribution points :(</div></td></tr>';
                 else {
@@ -159,8 +160,8 @@ MODALS
                 }
                 html += '</table>';
                 // Draw users
-                html+= '<h3>Users</h3>'
-                html += '<table class="users table" orgid="' + org.id + '">';
+                html += '<h3>Users</h3>'
+                html += '<table class="users table">';
                 if (org.users.length == 0)
                     html += '<tr><td colspan=3><div class="alert alert-primary"role="alert">There are no users :(</div></td></tr>';
                 else {
@@ -170,8 +171,15 @@ MODALS
                     });
                 }
                 html += '</table>';
+                html += '</div>';
                 $('#organizations').append(html);
             });
+
+            // Toggle rganizations if there are more than one
+            if (organizations.length === 1)
+                $('div[orgid]').show();
+            else
+                $('div[orgid]').hide();
         }
     }
 
@@ -240,7 +248,8 @@ MODALS
 
     $('#distribution').on('click', '.organization', function () {
         var orgid = $(this).attr('orgid');
-        $('table.users[orgid=' + orgid + ']').toggle();
+        $('div[orgid=' + orgid + ']').toggle();
+        //$('table.users[orgid=' + orgid + ']').toggle();
     });
 
     /*
