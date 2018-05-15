@@ -140,7 +140,7 @@ MODALS
             });
             // Add roles to selects
             $('select.roles-select').html('');
-            $('select.roles-select').append('<option value="administrator">Administrator</option>');
+            $('select.roles-select').append('<option value="org_administrator">Organization administrator</option>');
             $('select.roles-select').append('<option value="prepvol">Prep volunteer</option>');
 
             // Draw organizations

@@ -14,7 +14,7 @@ defined('EMONCMS_EXEC') or die('Restricted access');
 class Roles {
 
     const SUPERADMINISTRATOR = 'superadministrator'; // has access to all the organizations
-    const ADMINISTRATOR = 'administrator'; // has only access to it's own organization
+    const ADMINISTRATOR = 'org_administrator'; // has only access to it's own organization
     const PREPVOL = 'prepvol'; // has only got access to preparation
     const DAYVOL = 'dayvol'; // has access through day token and has only got access to preparation
 
