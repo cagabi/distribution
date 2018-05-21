@@ -79,3 +79,15 @@ h3{
 #preparation input[type=number]{
     width:50px;
 }
+
+#items table{
+    max-width:360px
+}
+
+#items h2{
+    margin-top:35px;
+}
+
+.pointer{
+    cursor: pointer;
+}

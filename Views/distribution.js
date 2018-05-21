@@ -28,12 +28,22 @@ var distribution = {
             }});
         return result;
     },
+    'create_item': function (name, regular) {
+        var result = {};
+        $.ajax({url: path + "distribution/createitem.json?name=" + name + "&regular=" + regular, method: 'GET', dataType: 'json', async: false, success: function (data) {
+                result = data;
+            }});
+        return result;
+    },
     'get_items': function () {
         var result = {};
         $.ajax({url: path + "distribution/getitems.json", dataType: 'json', async: false, success: function (data) {
-                var items = {regular: {}, non_regular: {}}
+                var items = {regular: {}, non_regular: {}};
                 data.forEach(function (item) {
-                    items[item.id] = item;
+                    if (item.regular == 1)
+                        items.regular[item.id] = item;
+                    else
+                        items.non_regular[item.id] = item;
                 });
                 result = items;
             }});
@@ -82,12 +92,19 @@ var distribution = {
         var result = {};
         $.ajax({url: path + "distribution/getlastweekpreparation.json?distributionid=" + distributionid + "", dataType: 'text', async: false, success: function (data) {
                 var last_week_preparation = JSON.parse(data);
-                for (var date in last_week_preparation){
-                    result[date]={};
-                    last_week_preparation[date].forEach(function(item){
-                        result[date][item.itemid]=item;
+                for (var date in last_week_preparation) {
+                    result[date] = {};
+                    last_week_preparation[date].forEach(function (item) {
+                        result[date][item.itemid] = item;
                     });
                 }
+            }});
+        return result;
+    },
+    'delete_item':function(item_id){
+        var result = {};
+        $.ajax({url: path + "distribution/deleteitem.json?id="+item_id, method: 'post', dataType: 'json', async: false, success: function (data) {
+                result = data;
             }});
         return result;
     }

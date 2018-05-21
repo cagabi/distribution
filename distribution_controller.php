@@ -90,6 +90,11 @@ function distribution_controller() {
                     $result = view("Modules/distribution/Views/day_token.php", array('day_token' => $day_token));
             }
         }
+        if ($route->action == 'items') {
+            if ($role == Roles::SUPERADMINISTRATOR || $role == Roles::ADMINISTRATOR) {
+                $result = view("Modules/distribution/Views/items_view.php", array());
+            }
+        }
     }
     else if ($route->format == 'json') {
         if ($route->action == "listorganizations") {
@@ -112,8 +117,17 @@ function distribution_controller() {
             if ($role == Roles::SUPERADMINISTRATOR || ($role == Roles::ADMINISTRATOR && $distribution->user_is_in_organization($session['userid'], $organizationid)))
                 $result = $distribution->create_distribution_point(get('name'), get('organizationid'));
         }
+
+        // Items
         if ($route->action == 'getitems') {
             $result = $distribution->get_items();
+        }
+        if ($route->action == 'createitem') {
+            $result = $distribution->create_item(get('name'), get('regular'));
+        }
+        if ($route->action == 'deleteitem') {
+            if ($role == Roles::SUPERADMINISTRATOR || $role == Roles::ADMINISTRATOR)
+                $result = $distribution->delete_item(get('id'));
         }
 
         // Distribution preparation
@@ -134,7 +148,7 @@ function distribution_controller() {
             }
             if ($route->action == 'getlastweekpreparation') {
                 $result = $distribution->get_last_week_preparation(get('distributionid'));
-            }            
+            }
         }
     }
 

@@ -243,6 +243,57 @@ class Distribution {
         return $items;
     }
 
+    public function create_item($name, $regular) {
+        $name2 = preg_replace('/[^\w\s_-]/', '', $name);
+        if ($regular == true || $regular == 1|| $regular == '1')
+            $regular = 1;
+        else
+            $regular = 0;
+
+        if ($name != $name2) {
+            return (array('error' => "Name contains invalid characters. <br />You can only use numbers, letters and blank spaces"));
+        }
+
+        if ($this->item_exists($name)) {
+            return (array('error' => "Name already exists"));
+        }
+
+        $result = $this->mysqli->query("INSERT INTO distribution_items (name, regular) VALUES ('$name','$regular')");
+        if ($this->mysqli->error != "" || $result == false) {
+            return array('error' => "There was a problem saving the item in the database<br />" . $this->mysqli->error);
+        }
+
+        return $this->mysqli->insert_id;
+    }
+
+    public function delete_item($itemid) {
+        $itemid = (int) $itemid;
+
+        $result = $this->mysqli->query("SELECT id FROM distribution_items WHERE id='$itemid'");
+        if ($result->num_rows === 0) {
+            return array('error' => "Item id not valid");
+        }
+
+        $result = $this->mysqli->query("DELETE FROM distribution_items WHERE id='$itemid'");
+        if ($this->mysqli->error != "" || $result == false) {
+            return array('error' => "There was a problem deleting the item from the database<br />" . $this->mysqli->error);
+        }
+
+        return true;
+    }
+
+    public function item_exists($name) {
+        $name = preg_replace('/[^\w\s_-]/', '', $name);
+        $result = $this->mysqli->query("SELECT id FROM distribution_items WHERE name='$name'");
+        $row = $result->fetch_array();
+        if ($row) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public function get_organization($orgid) {
         $org = array();
         $org['id'] = $orgid;
