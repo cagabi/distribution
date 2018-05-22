@@ -19,10 +19,13 @@ bind_textdomain_codeset($domain2, 'UTF-8');
             </div>
             <div id="step2" style="display:none">
                 <h3>Regular items</h3>
+                <div id="actions" style="margin-top:15px">
+                    <div id="edit-items" class="pointer"><i class="icon-edit add-button"></i> Edit items</div>
+                </div>
                 <table id="preparation-regular-items" class="table">
                     <tr><th>Item</th><th>Out yesterday</th><th>Returned from yesterday</th><th>Out today</th></tr>
                 </table>
-                <h3>Non-regular items <button class="btn"style="margin-left:105px">Add non-regular item (ToDo)</button></h3>
+                <h3>Non-regular items </h3>
                 <table id="preparation-non-regular-items" class="table">
                     <tr><th>Item</th><th>Out yesterday</th><th>Returned from yesterday</th><th>Out today</th></tr>
                 </table>
@@ -40,23 +43,6 @@ bind_textdomain_codeset($domain2, 'UTF-8');
 <!-------------------------------------------------------------------------------------------
 MODALS
 -------------------------------------------------------------------------------------------->
-<!-- Add organization -->
-<div id="add-organization-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="add-organization-modal-label" aria-hidden="true" data-backdrop="static">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="add-organization-modal-label">Add New Organization</h3>
-    </div>
-    <div class="modal-body">
-        <p>Name:<br>
-            <input id="add-organization-name" type="text" maxlength="64">
-        </p>
-        <div class="alert alert-primary" id="add-organization-message" role="alert"></div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-        <button id="add-organization-action" class="btn btn-primary">Add</button>
-    </div>
-</div>
 
 
 <script>
@@ -64,7 +50,7 @@ MODALS
     var path = "<?php echo $path; ?>";
     var items = distribution.get_items();
     var organizationid = <?php echo $args['organizationid'] ?>;
-    var organizations = <?php echo json_encode($args['organizations']) ?>;
+    var organizations = <?php echo json_encode($args['organizations']) ?>; // Organizations user belongs to
     var distributionid = 0; // Used on step 2
     var today_preparation = {}; // Used on step 2
     var last_week_preparation = [];
@@ -83,7 +69,10 @@ MODALS
     $('#step2').hide();
 
     // Development
-    //$('p[distribution_id="1"]').click();
+    setTimeout(function () {
+        $('p[distribution_id=1]').click();
+        $('#edit-items').click();
+    }, 0);
 
     /*******************
      * Actions
@@ -95,27 +84,10 @@ MODALS
 
         // Add title
         $('#step2').prepend('<h2>' + $(this).attr('organization') + ' - ' + $(this).attr('name') + '</h2>');
-        var yesterday = distribution.get_yesterday_preparation(distributionid);
-        var today_prep = distribution.get_today_preparation(distributionid);
 
-        // Draw preparation table
-        for (var item in yesterday) {
-            var itemid = 1.0 * yesterday[item].itemid;
-            var type = items[itemid].regular != 0 ? 'regular' : 'non-regular';
-            var html = '<tr itemid=' + itemid + '>';
-            html += '<td>' + items[itemid].name + '</td>';
-            html += '<td>' + yesterday[item].quantity_out + '</td>';
-            html += '<td><input type="number" source="yesterday-returned-item" itemid=' + itemid + ' min=0 value=' + yesterday[item].quantity_returned + ' /></td>';
-            if (today_prep[itemid] == undefined)
-                html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' min=0 value="" /></td>';
-            else
-                html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' min=0 value=' + today_prep[itemid].quantity_out + ' /></td>';
-            html += '</tr>';
-            $('#preparation-' + type + '-items').append(html);
-        }
-
-        // Add last week distribution quantities
-        // ToDo
+        // Draw tables
+        draw_preparation_table();
+        draw_last_week_preparation_table();
 
         // trigger auto-update
         setInterval(function () {
@@ -146,14 +118,6 @@ MODALS
         var items = distribution.get_items(); // update the list of itmes in case somebody has added one in the meantime
         var yesterday_preparation = distribution.get_yesterday_preparation(distributionid);
         var today_preparation = distribution.get_today_preparation(distributionid);
-        var last_week_preparation = distribution.get_last_week_preparation(distributionid);
-        var last_week_items = [];
-        for (var date in last_week_preparation) {
-            for (var itemid in last_week_preparation[date])
-                if (last_week_items.indexOf(itemid) == -1) {
-                    last_week_items.push(itemid);
-                }
-        }
 
         // Update view yesterday_preparation
         for (var item in yesterday_preparation) {
@@ -165,8 +129,40 @@ MODALS
             if (today_preparation[item].quantity_out != $('[source="today-preparation-item"][itemid="' + today_preparation[item].itemid + '"]').val())
                 $('[source="today-preparation-item"][itemid="' + today_preparation[item].itemid + '"]').val(today_preparation[item].quantity_out);
         }
+    }
 
-        // Update view last week distribution
+    function draw_preparation_table() {
+        var yesterday = distribution.get_yesterday_preparation(distributionid);
+        var today_prep = distribution.get_today_preparation(distributionid);
+
+        for (var item in yesterday) {
+            var itemid = 1.0 * yesterday[item].itemid;
+            var type = items[itemid].regular != 0 ? 'regular' : 'non-regular';
+            var html = '<tr itemid=' + itemid + '>';
+            html += '<td>' + items[itemid].name + '</td>';
+            html += '<td>' + yesterday[item].quantity_out + '</td>';
+            html += '<td><input type="number" source="yesterday-returned-item" itemid=' + itemid + ' min=0 value=' + yesterday[item].quantity_returned + ' /></td>';
+            if (today_prep[itemid] == undefined)
+                html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' min=0 value="" /></td>';
+            else
+                html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' min=0 value=' + today_prep[itemid].quantity_out + ' /></td>';
+            html += '</tr>';
+            $('#preparation-' + type + '-items').append(html);
+        }
+    }
+
+    function draw_last_week_preparation_table() {
+        // Detch last week distributions
+        var last_week_preparation = distribution.get_last_week_preparation(distributionid);
+        var last_week_items = [];
+        for (var date in last_week_preparation) {
+            for (var itemid in last_week_preparation[date])
+                if (last_week_items.indexOf(itemid) == -1) {
+                    last_week_items.push(itemid);
+                }
+        }
+
+        // Prepare html and append
         var html = '<tr><th></th>';
         for (var date in last_week_preparation) {
             html += '<th>' + date + '</th>';
@@ -183,9 +179,7 @@ MODALS
             html += '</tr>';
         });
         $('table#last-week-distribution').html(html);
-        console.log(html)
     }
-
     /*
      $('#preparation').on('click', '', function(){
      
