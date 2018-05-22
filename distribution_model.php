@@ -247,7 +247,7 @@ class Distribution {
         }
         return $items;
     }
-    
+
     public function get_items_not_deleted() {
         $result = $this->mysqli->query('SELECT id, name, regular FROM distribution_items WHERE deleted="0"');
         $items = array();
@@ -269,14 +269,25 @@ class Distribution {
         }
 
         if ($this->item_exists($name)) {
-            return (array('error' => "Name already exists"));
+            $item = $this->get_item_by_name($name);
+            if ($item['deleted'] == 0) // The item is active
+                return (array('error' => "Name already exists"));
+            else { // the item is deleted so we undelete it
+                $itemid = $item['id'];
+                $result = $this->mysqli->query("UPDATE distribution_items SET deleted='0', regular='$regular' WHERE id='$itemid'");
+                if ($this->mysqli->error != "" || $result == false) {
+                    return array('error' => "There was a problem saving the item to the database<br />" . $this->mysqli->error);
+                }
+                else {
+                    return $item['id'];
+                }
+            }
         }
 
         $result = $this->mysqli->query("INSERT INTO distribution_items (name, regular) VALUES ('$name','$regular')");
         if ($this->mysqli->error != "" || $result == false) {
             return array('error' => "There was a problem saving the item in the database<br />" . $this->mysqli->error);
         }
-
         return $this->mysqli->insert_id;
     }
 
@@ -302,6 +313,18 @@ class Distribution {
         $row = $result->fetch_array();
         if ($row) {
             return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function get_item_by_name($name) {
+        $name = preg_replace('/[^\w\s_-]/', '', $name);
+        $result = $this->mysqli->query("SELECT * FROM distribution_items WHERE name='$name'");
+        $row = $result->fetch_array();
+        if ($row) {
+            return array('id' => $row['id'], 'name' => $name, 'regular' => $row['regular'], 'deleted' => $row['deleted']);
         }
         else {
             return false;

@@ -93,6 +93,7 @@ MODALS
      * Actions
      *******************/
     $('#items').on('click', '#add-item', function () {
+        $('#add-item-name').val('');
         $('#add-item-message').hide();
         $('#add-item-modal').modal('show');
     });
