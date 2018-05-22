@@ -41,10 +41,18 @@ var distribution = {
                 //var items = {regular: {}, non_regular: {}};
                 var items = {};
                 data.forEach(function (item) {
-                    /*if (item.regular == 1)
-                     items.regular[item.id] = item;
-                     else
-                     items.non_regular[item.id] = item;*/
+                    items[item.id] = item;
+                });
+                result = items;
+            }});
+        return result;
+    },
+    'get_items_not_deleted': function () {
+        var result = {};
+        $.ajax({url: path + "distribution/getitemsnotdeleted.json", dataType: 'json', async: false, success: function (data) {
+                //var items = {regular: {}, non_regular: {}};
+                var items = {};
+                data.forEach(function (item) {
                     items[item.id] = item;
                 });
                 result = items;

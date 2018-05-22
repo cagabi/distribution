@@ -122,6 +122,9 @@ function distribution_controller() {
         if ($route->action == 'getitems') {
             $result = $distribution->get_items();
         }
+        if ($route->action == 'getitemsnotdeleted') {
+            $result = $distribution->get_items_not_deleted();
+        }
         if ($route->action == 'createitem') {
             $result = $distribution->create_item(get('name'), get('regular'));
         }

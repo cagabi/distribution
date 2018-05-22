@@ -82,7 +82,7 @@ MODALS
 <script>
     // Initialize variables
     var path = "<?php echo $path; ?>";
-    var items = distribution.get_items();
+    var items = distribution.get_items_not_deleted();
 
     update_view();
 
@@ -123,7 +123,7 @@ MODALS
         else {
             for (var id in items) {
                 if (id == item_id)
-                    delete items.regular[id];
+                    delete items[id];
             }
             update_view();
             $('#delete-item-modal').modal('hide');

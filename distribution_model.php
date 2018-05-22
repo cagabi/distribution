@@ -234,8 +234,22 @@ class Distribution {
         }
     }
 
+    /**
+     * Fetches all the items in the database even if they have been deleted. Useful to show past preparations as they may have items that have been deleted
+     * 
+     * @return array of items: array('id' => $row['id'], 'name' => $row['name'], 'regular' => $row['regular']);
+     */
     public function get_items() {
         $result = $this->mysqli->query('SELECT id, name, regular FROM distribution_items');
+        $items = array();
+        while ($row = $result->fetch_array()) {
+            $items[] = array('id' => $row['id'], 'name' => $row['name'], 'regular' => $row['regular']);
+        }
+        return $items;
+    }
+    
+    public function get_items_not_deleted() {
+        $result = $this->mysqli->query('SELECT id, name, regular FROM distribution_items WHERE deleted="0"');
         $items = array();
         while ($row = $result->fetch_array()) {
             $items[] = array('id' => $row['id'], 'name' => $row['name'], 'regular' => $row['regular']);
@@ -274,7 +288,7 @@ class Distribution {
             return array('error' => "Item id not valid");
         }
 
-        $result = $this->mysqli->query("DELETE FROM distribution_items WHERE id='$itemid'");
+        $result = $this->mysqli->query("UPDATE distribution_items SET deleted='1' WHERE id='$itemid'");
         if ($this->mysqli->error != "" || $result == false) {
             return array('error' => "There was a problem deleting the item from the database<br />" . $this->mysqli->error);
         }

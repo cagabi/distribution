@@ -61,7 +61,7 @@ MODALS
 <script>
     // Initialize variables
     var path = "<?php echo $path; ?>";
-    var items = distribution.get_items();
+    var items = distribution.get_items(); // returns also deleted items just in case they have been using before deleting them
     var organizationid = <?php echo $args['organizationid'] ?>;
     var organizations = <?php echo json_encode($args['organizations']) ?>; // Organizations user belongs to
     var distributionid = 0; // Used on step 2
@@ -105,7 +105,7 @@ MODALS
         draw_preparation_table();
         draw_last_week_preparation_table();
 
-        // trigger auto-update
+        // trigger auto-update to allow for simultaneous edition in more than one device
         setInterval(function () {
             update_preparation();
         }, 2000);
@@ -124,14 +124,15 @@ MODALS
         }
     });
     $('#preparation').on('click', '#edit-items', function () {
+        var items_not_deleted = distribution.get_items_not_deleted();
         $('#edit-items-regular').html('');
         $('#edit-items-non-regular').html('');
         var html = '';
-        for (var id in items) {
-            if (items[id].regular == '1')
-                $('#edit-items-regular').append('<p><input type="checkbox" item-id="' + id + '" type="regular" /> ' + items[id].name + '</p>');
+        for (var id in items_not_deleted) {
+            if (items_not_deleted[id].regular == '1')
+                $('#edit-items-regular').append('<p><input type="checkbox" item-id="' + id + '" type="regular" /> ' + items_not_deleted[id].name + '</p>');
             else
-                $('#edit-items-non-regular').append('<p><input type="checkbox" item-id="' + id + '" type="non-regular" /> ' + items[id].name + '</p>');
+                $('#edit-items-non-regular').append('<p><input type="checkbox" item-id="' + id + '" type="non-regular" /> ' + items_not_deleted[id].name + '</p>');
             if ($('tr[itemid=' + id + ']').length > 0)
                 $('#edit-items-modal input[item-id=' + id + ']').prop('checked', true);
         }
