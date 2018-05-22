@@ -138,34 +138,27 @@ MODALS
         $('#regular-items .item').remove();
         $('#non-regular-items .item').remove();
         // display  items
-        if (Object.keys(items).length == 0) {
+        var out = '';
+        for (var itemid in items) {
+            out = '<tr class="item"><td>' + items[itemid].name + '</td><td><i class="icon-trash pointer" id=' + itemid + ' /></td></tr>';
+            if (items[itemid].regular == 1)
+                $('#regular-items').append(out);
+            else
+                $('#non-regular-items').append(out);
+        }
+        if ($('#regular-items tr').length > 1) { // there is always one tr for the headers
+            $('#regular-items-alert').hide();
+            $('#regular-items').show();
+        } else {
             $('#regular-items-alert').show();
             $('#regular-items').hide();
+        }
+        if ($('#non-regular-items tr').length > 1) { // there is always one tr for the headers
+            $('#non-regular-items-alert').hide();
+            $('#non-regular-items').show();
         } else {
-            var out = '';
-            for (var itemid in items) {
-                out = '<tr class="item"><td>' + items[itemid].name + '</td><td><i class="icon-trash pointer" id=' + itemid + ' /></td></tr>';
-                if (items[itemid].regular == 1)
-                    $('#regular-items').append(out);
-                else
-                    $('#non-regular-items').append(out);
-            }
-            if ($('#regular-items tr').length>0) {
-                $('#regular-items-alert').hide();
-                $('#regular-items').show();
-            }
-            else{
-                $('#regular-items-alert').hide();
-                $('#regular-items').show();
-            }
-            if ($('#non-regular-items tr').length>0) {
-                $('#non-regular-items-alert').hide();
-                $('#non-regular-items').show();
-            }
-            else{
-                $('#non-regular-items-alert').hide();
-                $('#non-regular-items').show();
-            }
+            $('#non-regular-items-alert').show();
+            $('#non-regular-items').hide();
         }
     }
 </script>
