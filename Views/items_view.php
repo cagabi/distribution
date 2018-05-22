@@ -105,67 +105,67 @@ MODALS
         if (item_id.error != undefined)
             $('#add-item-message').html(item_id.error).show();
         else {
-            items[type][item_id] = {id: item_id, name: name, regular: regular}
+            items[item_id] = {id: item_id, name: name, regular: regular}
             update_view();
             $('#add-item-modal').modal('hide');
         }
     });
-    $('#items').on('click','.icon-trash',function(){
+    $('#items').on('click', '.icon-trash', function () {
         $('#delete-item-message').hide();
         var item_id = $(this).attr('id');
-        $('#delete-item-modal').attr('item-id',item_id).modal('show');
+        $('#delete-item-modal').attr('item-id', item_id).modal('show');
     });
-    $('#delete-item-ok').on('click',function(){
+    $('#delete-item-ok').on('click', function () {
         var item_id = $('#delete-item-modal').attr('item-id');
-        var result=distribution.delete_item(item_id);
-        if (result.error!=undefined)
+        var result = distribution.delete_item(item_id);
+        if (result.error != undefined)
             $('#delete-item-message').html(result.error).show();
-        else{
-            for (var id in items.regular){
-                if (id ==item_id)
+        else {
+            for (var id in items) {
+                if (id == item_id)
                     delete items.regular[id];
-            }
-            for (var id in items.non_regular){
-                if (id ==item_id)
-                    delete items.non_regular[id];
             }
             update_view();
             $('#delete-item-modal').modal('hide');
         }
-            
+
     });
-    
+
     /***************
      * Functions
      ***************/
     function update_view() {
         $('#regular-items .item').remove();
         $('#non-regular-items .item').remove();
-        // display regular items
-        if (Object.keys(items.regular).length == 0) {
+        // display  items
+        if (Object.keys(items).length == 0) {
             $('#regular-items-alert').show();
             $('#regular-items').hide();
         } else {
             var out = '';
-            for (var itemid in items.regular) {
-                out = '<tr class="item"><td>' + items.regular[itemid].name + '</td><td><i class="icon-trash pointer" id=' + itemid + ' /></td></tr>';
-                $('#regular-items').append(out);
+            for (var itemid in items) {
+                out = '<tr class="item"><td>' + items[itemid].name + '</td><td><i class="icon-trash pointer" id=' + itemid + ' /></td></tr>';
+                if (items[itemid].regular == 1)
+                    $('#regular-items').append(out);
+                else
+                    $('#non-regular-items').append(out);
             }
-            $('#regular-items-alert').hide();
-            $('#regular-items').show();
-        }
-        // display non-regular items
-        if (Object.keys(items.regular).length == 0) {
-            $('#non-regular-items-alert').show();
-            $('#non-regular-items').hide();
-        } else {
-            var out = '';
-            for (var itemid in items.non_regular) {
-                out = '<tr class="item"><td>' + items.non_regular[itemid].name + '</td><td><i class="icon-trash pointer" id=' + itemid + ' /></td></tr>';
-                $('#non-regular-items').append(out);
+            if ($('#regular-items tr').length>0) {
+                $('#regular-items-alert').hide();
+                $('#regular-items').show();
             }
-            $('#non-regular-items-alert').hide();
-            $('#non-regular-items').show();
+            else{
+                $('#regular-items-alert').hide();
+                $('#regular-items').show();
+            }
+            if ($('#non-regular-items tr').length>0) {
+                $('#non-regular-items-alert').hide();
+                $('#non-regular-items').show();
+            }
+            else{
+                $('#non-regular-items-alert').hide();
+                $('#non-regular-items').show();
+            }
         }
     }
 </script>
