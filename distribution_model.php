@@ -245,7 +245,7 @@ class Distribution {
 
     public function create_item($name, $regular) {
         $name2 = preg_replace('/[^\w\s_-]/', '', $name);
-        if ($regular == true || $regular == 1|| $regular == '1')
+        if ($regular == true || $regular == 1 || $regular == '1')
             $regular = 1;
         else
             $regular = 0;
@@ -333,7 +333,7 @@ class Distribution {
         if ($row_preparation = $result->fetch_array())
             $result = $this->mysqli->query("UPDATE distribution_preparation SET quantity_returned='$value' WHERE itemid='$itemid' and distribution_point_id='$distributionid' and date='$date'");
         else
-            $result = $this->mysqli->query("INSERT INTO distribution_preparation (quantity_returned, itemid, distribution_point_id, date)VALUES ('$value', '$itemid', '$distributionid', '$date')");
+            $result = $this->mysqli->query("INSERT INTO distribution_preparation (quantity_returned, itemid, distribution_point_id, date) VALUES ('$value', '$itemid', '$distributionid', '$date')");
         if (result === false)
             return false;
 
@@ -353,7 +353,7 @@ class Distribution {
         if ($result->num_rows > 0)
             $result = $this->mysqli->query("UPDATE distribution_preparation SET quantity_out='$value' WHERE itemid='$itemid' and distribution_point_id='$distributionid' and date='$date'");
         else
-            $result = $this->mysqli->query("INSERT INTO distribution_preparation (quantity_out, itemid, distribution_point_id, date)VALUES ('$value', '$itemid', '$distributionid', '$date')");
+            $result = $this->mysqli->query("INSERT INTO distribution_preparation (quantity_out, itemid, distribution_point_id, date, quantity_returned) VALUES ('$value', '$itemid', '$distributionid', '$date', 0)");
         return $result;
     }
 

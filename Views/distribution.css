@@ -91,3 +91,7 @@ h3{
 .pointer{
     cursor: pointer;
 }
+#edit-items-modal{
+    position:relative;
+    top:-500px;
+}

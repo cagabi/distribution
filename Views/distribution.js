@@ -38,12 +38,14 @@ var distribution = {
     'get_items': function () {
         var result = {};
         $.ajax({url: path + "distribution/getitems.json", dataType: 'json', async: false, success: function (data) {
-                var items = {regular: {}, non_regular: {}};
+                //var items = {regular: {}, non_regular: {}};
+                var items = {};
                 data.forEach(function (item) {
-                    if (item.regular == 1)
-                        items.regular[item.id] = item;
-                    else
-                        items.non_regular[item.id] = item;
+                    /*if (item.regular == 1)
+                     items.regular[item.id] = item;
+                     else
+                     items.non_regular[item.id] = item;*/
+                    items[item.id] = item;
                 });
                 result = items;
             }});
@@ -101,9 +103,9 @@ var distribution = {
             }});
         return result;
     },
-    'delete_item':function(item_id){
+    'delete_item': function (item_id) {
         var result = {};
-        $.ajax({url: path + "distribution/deleteitem.json?id="+item_id, method: 'post', dataType: 'json', async: false, success: function (data) {
+        $.ajax({url: path + "distribution/deleteitem.json?id=" + item_id, method: 'post', dataType: 'json', async: false, success: function (data) {
                 result = data;
             }});
         return result;
