@@ -82,10 +82,10 @@ MODALS
     $('#step2').hide();
 
     // Development
-    setTimeout(function () {
+    /*setTimeout(function () {
         $('p[distribution_id=1]').click();
-        //$('#edit-items').click();
-    }, 0);
+        $('#edit-items').click();
+    }, 0);*/
 
     /*******************
      * Actions

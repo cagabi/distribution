@@ -156,6 +156,7 @@ class Distribution {
         }
         else {
             $userid = $result['userid'];
+            $result = $this->mysqli->query("UPDATE users SET startingpage='distribution/preparation' WHERE id='$userid'");
             $result = $this->mysqli->query("INSERT INTO distribution_users (id,role,organizationid) VALUES ('$userid','$role','$organizationid')");
             if ($this->mysqli->error != "" || $result == false) {
                 return array('error' => "There was a problem saving the user in the database<br />" . $this->mysqli->error);
