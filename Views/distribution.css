@@ -80,6 +80,14 @@ h3{
     width:50px;
 }
 
+#items{
+    max-width:500px
+}
+
+
+#preparation{
+    max-width:650px
+}
 #items table{
     max-width:360px
 }

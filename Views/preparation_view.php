@@ -13,8 +13,9 @@ bind_textdomain_codeset($domain2, 'UTF-8');
 <div id="preparation">
     <div id="wrapper">
         <div class="page-content" style="padding-top:15px">
+            <h1>Preparation</h1>
             <div id="step1">
-                <h1>Choose a distribution point</h1>
+                <h2>Choose a distribution point</h2>
                 <div id="distribution-points"></div>
             </div>
             <div id="step2" style="display:none">
@@ -71,7 +72,7 @@ MODALS
 
     // Add distribution points
     organizations.forEach(function (org) {
-        $('#distribution-points').append('<h2>' + org.name + '</h2>');
+        $('#distribution-points').append('<h3>' + org.name + '</h3>');
         org.distribution_points.forEach(function (distro_point) {
             var html = '<p class="distribution-point" distribution_id="' + distro_point.id + '" organization_id="' + org.id + '" name="' + distro_point.name + '" organization="' + org.name + '">' + distro_point.name + '</p>';
             $('#distribution-points').append(html);
