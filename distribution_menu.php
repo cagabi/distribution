@@ -10,9 +10,10 @@ $distribution = new Distribution($mysqli, $user);
 
 $distro_user = $distribution->get_user($session['userid']);
 if ($distro_user['role'] == Roles::SUPERADMINISTRATOR || $distro_user['role'] == Roles::ADMINISTRATOR) {
-    $menu_dropdown[] = array('name' => dgettext($domain, "Administration"), 'icon' => '', 'path' => "distribution/admin", 'session' => "write", 'order' => 1);
+    $menu_dropdown[] = array('name' => dgettext($domain, "Orgs, users & distribtuion points"), 'icon' => '', 'path' => "distribution/admin", 'session' => "write", 'order' => 1);
     $menu_dropdown[] = array('name' => dgettext($domain, "Day token"), 'icon' => '', 'path' => "distribution/daytoken", 'session' => "write", 'order' => 2);
     $menu_dropdown[] = array('name' => dgettext($domain, "Items"), 'icon' => '', 'path' => "distribution/items", 'session' => "write", 'order' => 3);
+    $menu_dropdown[] = array('name' => dgettext($domain, "Edit old distributions"), 'icon' => '', 'path' => "distribution/editdistributions", 'session' => "write", 'order' => 3);
 }
 
 $menu_dropdown[] = array('name' => dgettext($domain, "Preparation"), 'icon' => '', 'path' => "distribution/preparation", 'session' => "write", 'order' => 1);

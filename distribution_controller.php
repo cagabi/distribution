@@ -73,7 +73,7 @@ function distribution_controller() {
             }
         }
         if ($route->action == 'preparation') { // Everybody can get to the preparation page
-            if ($role == Roles::SUPERADMINISTRATOR || $role == Roles::DAYVOL) {
+            if ($role == Roles::SUPERADMINISTRATOR || $role == Roles::DAYVOL) { // the day vol logged with day token can see all the distributions
                 $orgs = $distribution->get_organizations();
             }
             else {
@@ -93,6 +93,12 @@ function distribution_controller() {
         if ($route->action == 'items') {
             if ($role == Roles::SUPERADMINISTRATOR || $role == Roles::ADMINISTRATOR) {
                 $result = view("Modules/distribution/Views/items_view.php", array());
+            }
+        }
+        if ($route->action == 'editdistributions') {
+            if ($role == Roles::SUPERADMINISTRATOR || $role == Roles::ADMINISTRATOR) {
+                $orgs = $distribution->get_organizations();
+                $result = view("Modules/distribution/Views/edit_distributions_view.php", array('organizations' => $orgs, 'organizationid' => $organizationid));
             }
         }
     }
@@ -151,6 +157,14 @@ function distribution_controller() {
             }
             if ($route->action == 'getlastweekpreparation') {
                 $result = $distribution->get_last_week_preparation(get('distributionid'));
+            }
+            if ($route->action == 'getweekpreparation') {
+                $result = $distribution->get_week_preparation(get('distributionid'), get('date'));
+            }
+        }
+        if ($role == Roles::SUPERADMINISTRATOR || $role == Roles::ADMINISTRATOR) {
+            if ($route->action == 'savedistributeditem') {
+                $result = $distribution->save_distributed_item(get('value'), get('itemid'), get('distributionid'), get('date'));
             }
         }
     }

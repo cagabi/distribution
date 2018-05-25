@@ -1,7 +1,7 @@
 #wrapper {
     padding:0px;
     margin:0px;
-    padding-left: 50px;
+    padding: 35px;
 }
 
 .sidebar {
@@ -91,7 +91,25 @@ h3{
 .pointer{
     cursor: pointer;
 }
-#edit-items-modal{
-    position:relative;
-    top:-650px;
+
+#edit_distributions h3{
+    margin-left:0;
+}
+
+#distribution-points button{
+    margin:0 25px 10px
+}
+
+#distributions input{
+    width:50px;
+}
+
+#edit_distributions{
+    max-width:700px
+}
+
+@media only screen and (max-width: 700px) {
+    #wrapper {
+    padding: 0px;
+}
 }

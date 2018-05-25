@@ -80,6 +80,13 @@ var distribution = {
             }});
         return result;
     },
+    'save_distributed_item': function (value, itemid, distributionid, date) {
+        var result = {};
+        $.ajax({url: path + "distribution/savedistributeditem.json?value=" + value + "&itemid=" + itemid + "&distributionid=" + distributionid + "&date=" + date, dataType: 'json', async: false, success: function (data) {
+                result = data;
+            }});
+        return result;
+    },
     'get_today_preparation': function (distributionid) {
         var result = {};
         $.ajax({url: path + "distribution/gettodaypreparation.json?&distributionid=" + distributionid, dataType: 'json', async: false, success: function (data) {
@@ -111,6 +118,19 @@ var distribution = {
             }});
         return result;
     },
+    'get_week_preparation': function (distributionid, date) {
+        var result = {};
+        $.ajax({url: path + "distribution/getweekpreparation.json?distributionid=" + distributionid + "&date=" + date, dataType: 'text', async: false, success: function (data) {
+                var week_preparation = JSON.parse(data);
+                for (var date in week_preparation) {
+                    result[date] = {};
+                    week_preparation[date].forEach(function (item) {
+                        result[date][item.itemid] = item;
+                    });
+                }
+            }});
+        return result;
+    },
     'delete_item': function (item_id) {
         var result = {};
         $.ajax({url: path + "distribution/deleteitem.json?id=" + item_id, method: 'post', dataType: 'json', async: false, success: function (data) {
@@ -119,7 +139,6 @@ var distribution = {
         return result;
     }
 };
-
 /*********
  function () {
  var result = {};
