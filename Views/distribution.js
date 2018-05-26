@@ -137,6 +137,18 @@ var distribution = {
                 result = data;
             }});
         return result;
+    },
+    'sort_dates': function (preparations) {
+        var sorted_dates = [];
+        for (var d in preparations)
+            sorted_dates.push(d);
+        sorted_dates.sort(function (a, b) {
+            if (a > b)
+                return true;
+            else
+                return false;
+        });
+        return sorted_dates;
     }
 };
 /*********

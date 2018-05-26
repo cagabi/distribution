@@ -140,16 +140,7 @@ MODALS
         distribution.save_distributed_item($(this).val(), $(this).attr('item-id'), distributionid, $(this).attr('date'));
     });
     $('#edit_distributions').on('click', '#step-backward', function () {
-        // Sort preparation dates
-        var sorted_dates = [];
-        for (var d in week_preparation)
-            sorted_dates.push(d);
-        sorted_dates.sort(function (a, b) {
-            if (a > b)
-                return true;
-            else
-                return false;
-        });
+        var sorted_dates = distribution.sort_dates(week_preparation);
         delete week_preparation[sorted_dates[6]];
         var day = new Date(date_selected);
         day.setDate(day.getDate() - 1);
@@ -158,16 +149,7 @@ MODALS
         week_preparation = distribution.get_week_preparation(distributionid, date_selected);
     });
     $('#edit_distributions').on('click', '#step-forward', function () {
-        // Sort preparation dates
-        var sorted_dates = [];
-        for (var d in week_preparation)
-            sorted_dates.push(d);
-        sorted_dates.sort(function (a, b) {
-            if (a > b)
-                return true;
-            else
-                return false;
-        });
+        var sorted_dates = distribution.sort_dates(week_preparation);
         delete week_preparation[sorted_dates[0]];
         var day = new Date(date_selected);
         day.setDate(day.getDate() + 1);
@@ -201,14 +183,7 @@ MODALS
                 week_preparation[date_str] = {};
         }
         // Sort preparation dates
-        for (var d in week_preparation)
-            sorted_dates.push(d);
-        sorted_dates.sort(function (a, b) {
-            if (a > b)
-                return true;
-            else
-                return false;
-        });
+        sorted_dates = distribution.sort_dates(week_preparation);
         // Prepare html and append
         var html = '<tr><th></th>';
         sorted_dates.forEach(function (date_str) {

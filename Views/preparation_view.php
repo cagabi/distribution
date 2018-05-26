@@ -201,6 +201,7 @@ MODALS
     function draw_last_week_preparation_table() {
         // Fetch last week distributions
         var last_week_preparation = distribution.get_last_week_preparation(distributionid);
+        var sorted_dates = distribution.sort_dates(last_week_preparation);
         var last_week_items = [];
         for (var date in last_week_preparation) {
             for (var itemid in last_week_preparation[date])
@@ -211,17 +212,18 @@ MODALS
 
         // Prepare html and append
         var html = '<tr><th></th>';
-        for (var date in last_week_preparation) {
-            html += '<th>' + date + '</th>';
+        for (var date in sorted_dates) {
+            var date_obj = new Date(sorted_dates[date]);
+            html += '<th>' + date_obj.toString().substr(0, 15) + '</th>';
         }
         html += '</tr>';
         last_week_items.forEach(function (itemid) {
             html += '<tr><td>' + items[itemid].name + '</td>';
-            for (var date in last_week_preparation) {
-                if (last_week_preparation[date][itemid] == undefined)
+            for (var date in sorted_dates) {
+                if (last_week_preparation[sorted_dates[date]][itemid] == undefined)
                     html += '<td>0</td>';
                 else
-                    html += '<td>' + last_week_preparation[date][itemid].quantity + '</td>';
+                    html += '<td>' + last_week_preparation[sorted_dates[date]][itemid].quantity + '</td>';
             }
             html += '</tr>';
         });
