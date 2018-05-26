@@ -63,13 +63,14 @@ MODALS
     // Initialize variables
     var path = "<?php echo $path; ?>";
     var items = distribution.get_items(); // returns also deleted items just in case they have been using before deleting them
+    var sorted_items = distribution.sort_items(items);
     var organizationid = <?php echo $args['organizationid'] ?>;
     var organizations = <?php echo json_encode($args['organizations']) ?>; // Organizations user belongs to
     var distributionid = 0; // Used on step 2
     var today_preparation = {}; // Used on step 2
     var yesterday_preparation = {}; // Used on step 2
-    var last_week_preparation = [];
-
+    var last_week_preparation = []; // Used on step 2
+   
     // Add distribution points
     organizations.forEach(function (org) {
         $('#distribution-points').append('<h3>' + org.name + '</h3>');
@@ -84,9 +85,9 @@ MODALS
 
     // Development
     /*setTimeout(function () {
-        $('p[distribution_id=1]').click();
-        $('#edit-items').click();
-    }, 0);*/
+     $('p[distribution_id=1]').click();
+     $('#edit-items').click();
+     }, 0);*/
 
     /*******************
      * Actions
@@ -101,6 +102,7 @@ MODALS
 
         // Draw tables
         items = distribution.get_items();
+        sorted_items = distribution.sort_items(items);
         yesterday_preparation = distribution.get_yesterday_preparation(distributionid);
         today_preparation = distribution.get_today_preparation(distributionid);
         draw_preparation_table();
@@ -126,16 +128,17 @@ MODALS
     });
     $('#preparation').on('click', '#edit-items', function () {
         var items_not_deleted = distribution.get_items_not_deleted();
+        var sorted_items_not_deleted = distribution.sort_items(items_not_deleted);
         $('#edit-items-regular').html('');
         $('#edit-items-non-regular').html('');
         var html = '';
-        for (var id in items_not_deleted) {
-            if (items_not_deleted[id].regular == '1')
-                $('#edit-items-regular').append('<p><input type="checkbox" item-id="' + id + '" type="regular" /> ' + items_not_deleted[id].name + '</p>');
+        for (var i in sorted_items_not_deleted) {
+            if (sorted_items_not_deleted[i].regular == '1')
+                $('#edit-items-regular').append('<p><input type="checkbox" item-id="' + sorted_items_not_deleted[i].id + '" type="regular" /> ' + sorted_items_not_deleted[i].name + '</p>');
             else
-                $('#edit-items-non-regular').append('<p><input type="checkbox" item-id="' + id + '" type="non-regular" /> ' + items_not_deleted[id].name + '</p>');
-            if ($('tr[itemid=' + id + ']').length > 0)
-                $('#edit-items-modal input[item-id=' + id + ']').prop('checked', true);
+                $('#edit-items-non-regular').append('<p><input type="checkbox" item-id="' + sorted_items_not_deleted[i].id + '" type="non-regular" /> ' + sorted_items_not_deleted[i].name + '</p>');
+            if ($('tr[itemid=' + sorted_items_not_deleted[i].id + ']').length > 0)
+                $('#edit-items-modal input[item-id=' + sorted_items_not_deleted[i].id + ']').prop('checked', true);
         }
         $('#edit-items-modal').modal('show');
     });

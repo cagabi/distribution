@@ -111,16 +111,17 @@ MODALS
     });
     $('#edit_distributions').on('click', '#edit-items', function () {
         var items_not_deleted = distribution.get_items_not_deleted();
+        var sorted_items_not_deleted = distribution.sort_items(items_not_deleted);
         $('#edit-items-regular').html('');
         $('#edit-items-non-regular').html('');
         var html = '';
-        for (var id in items_not_deleted) {
-            if (items_not_deleted[id].regular == '1')
-                $('#edit-items-regular').append('<p><input type="checkbox" item-id="' + id + '" type="regular" /> ' + items_not_deleted[id].name + '</p>');
+        for (var i in sorted_items_not_deleted) {
+            if (sorted_items_not_deleted[i].regular == '1')
+                $('#edit-items-regular').append('<p><input type="checkbox" item-id="' + sorted_items_not_deleted[i].id + '" type="regular" /> ' + sorted_items_not_deleted[i].name + '</p>');
             else
-                $('#edit-items-non-regular').append('<p><input type="checkbox" item-id="' + id + '" type="non-regular" /> ' + items_not_deleted[id].name + '</p>');
-            if ($('tr[itemid=' + id + ']').length > 0)
-                $('#edit-items-modal input[item-id=' + id + ']').prop('checked', true);
+                $('#edit-items-non-regular').append('<p><input type="checkbox" item-id="' + sorted_items_not_deleted[i].id + '" type="non-regular" /> ' + sorted_items_not_deleted[i].name + '</p>');
+            if ($('tr[itemid=' + sorted_items_not_deleted[i].id + ']').length > 0)
+                $('#edit-items-modal input[item-id=' + sorted_items_not_deleted[i].id + ']').prop('checked', true);
         }
         $('#edit-items-modal').modal('show');
     });

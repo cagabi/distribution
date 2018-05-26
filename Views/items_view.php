@@ -140,9 +140,10 @@ MODALS
         $('#non-regular-items .item').remove();
         // display  items
         var out = '';
-        for (var itemid in items) {
-            out = '<tr class="item"><td>' + items[itemid].name + '</td><td><i class="icon-trash pointer" id=' + itemid + ' /></td></tr>';
-            if (items[itemid].regular == 1)
+        var sorted_items = distribution.sort_items(items);
+        for (var i in sorted_items) {
+            out = '<tr class="item"><td>' + sorted_items[i].name + '</td><td><i class="icon-trash pointer" id=' + sorted_items[i].itemid + ' /></td></tr>';
+            if (sorted_items[i].regular == 1)
                 $('#regular-items').append(out);
             else
                 $('#non-regular-items').append(out);

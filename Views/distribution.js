@@ -149,6 +149,28 @@ var distribution = {
                 return false;
         });
         return sorted_dates;
+    },
+    'sort_items': function (items) {
+        var sorted_items = [];
+        for (var i in items)
+            sorted_items.push(items[i]);
+        sorted_items.sort(function (a, b) {
+            if (a.name.toUpperCase() > b.name.toUpperCase())
+                return true;
+            else
+                return false;
+        });
+        return sorted_items;
+    },
+    'sort_preparation': function (preparation) {
+        var sorted_preparation = [];
+        sorted_preparation.sort(function (a, b) {
+            if (a.name.toUpperCase() > b.name.toUpperCase())
+                return true;
+            else
+                return false;
+        });
+        return sorted_preparation;
     }
 };
 /*********
