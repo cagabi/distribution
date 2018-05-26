@@ -70,7 +70,7 @@ MODALS
     var today_preparation = {}; // Used on step 2
     var yesterday_preparation = {}; // Used on step 2
     var last_week_preparation = []; // Used on step 2
-   
+
     // Add distribution points
     organizations.forEach(function (org) {
         $('#distribution-points').append('<h3>' + org.name + '</h3>');
@@ -197,6 +197,21 @@ MODALS
                     html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' min=0 value=' + today_preparation[itemid].quantity_out + ' /></td>';
                 html += '</tr>';
                 $('#preparation-' + type + '-items').append(html);
+            }
+        }
+        for (var item in today_preparation) {
+            var itemid = 1.0 * today_preparation[item].itemid;
+            if ($('[source="today-preparation-item"][itemid=' + itemid + ']').length == 0) {
+                if (items[itemid] != undefined) {
+                    var type = items[itemid].regular != 0 ? 'regular' : 'non-regular';
+                    var html = '<tr itemid=' + itemid + '>';
+                    html += '<td>' + items[itemid].name + '</td>';
+                    html += '<td>0</td>';
+                    html += '<td><input type="number" source="yesterday-returned-item" itemid=' + itemid + ' class="item" min=0 value=0 /></td>';
+                    html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' min=0 value=' + today_preparation[itemid].quantity_out + ' /></td>';
+                    html += '</tr>';
+                    $('#preparation-' + type + '-items').append(html);
+                }
             }
         }
     }
