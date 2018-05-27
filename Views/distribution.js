@@ -143,6 +143,13 @@ var distribution = {
             }});
         return result;
     },
+    'delete_distribution_point': function (distroid) {
+        var result = {};
+        $.ajax({url: path + "distribution/deletedistributionpoint.json?distributionid=" + distroid, method: 'post', dataType: 'json', async: false, success: function (data) {
+                result = data;
+            }});
+        return result;
+    },
     'sort_dates': function (preparations) {
         var sorted_dates = [];
         for (var d in preparations)
@@ -176,6 +183,16 @@ var distribution = {
                 return false;
         });
         return sorted_preparation;
+    },
+    any_active_distribution_point: function (distribution_points) {
+        if (distribution_points.length == 0)
+            return false;
+        var any_active = false;
+        distribution_points.forEach(function (distro_point) {
+            if (distro_point.deleted == 0)
+                any_active = true;
+        });
+        return any_active;
     }
 };
 /*********

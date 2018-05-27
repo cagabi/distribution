@@ -106,9 +106,9 @@ class Distribution {
     public function get_distribution_points($orgid) {
         $orgid = (int) $orgid;
         $distribution_points = array();
-        $result = $this->mysqli->query("SELECT id, name FROM distribution_points WHERE organizationid = '$orgid'");
+        $result = $this->mysqli->query("SELECT id, name, deleted FROM distribution_points WHERE organizationid = '$orgid'");
         while ($row = $result->fetch_array()) {
-            $distribution_points[] = ['id' => $row['id'], 'name' => $row['name']];
+            $distribution_points[] = ['id' => $row['id'], 'name' => $row['name'], 'deleted' => $row['deleted']];
         }
         return $distribution_points;
     }
@@ -203,16 +203,28 @@ class Distribution {
     /**
      * Adds a new distribution point to the database for the given organizationid
      * @param string $name
-     * @return integer id of the new organizationid or an associative array in case of error: array('error' => "Error meassage")
+     * @return integer id of the new distribution point or an associative array in case of error: array('error' => "Error meassage")
      */
     public function create_distribution_point($name, $orgid) {
         $name2 = preg_replace('/[^\w\s_-]/', '', $name);
         if ($name != $name2) {
             return (array('error' => "Name contains invalid characters. <br />You can only use numbers, letters and blank spaces"));
         }
-
+        
         if ($this->distribution_point_exists($name)) {
-            return (array('error' => "Name already exists"));
+            $distr_point = $this->get_distribution_point_by_name($name);
+            if ($distr_point['deleted'] == 0) // The item is active
+                return (array('error' => "Name already exists"));
+            else { // the distro point is deleted so we undelete it
+                $distr_point_id = $distr_point['id'];
+                $result = $this->mysqli->query("UPDATE distribution_points SET deleted='0' WHERE id='$distr_point_id'");
+                if ($this->mysqli->error != "" || $result == false) {
+                    return array('error' => "There was a problem saving the item to the database<br />" . $this->mysqli->error);
+                }
+                else {
+                    return $distr_point['id'];
+                }
+            }
         }
 
         $result = $this->mysqli->query("INSERT INTO distribution_points (name, organizationid) VALUES ('$name','$orgid')");
@@ -308,6 +320,22 @@ class Distribution {
         return true;
     }
 
+    public function delete_distribution_point($distro_id) {
+        $distro_id = (int) $distro_id;
+
+        $result = $this->mysqli->query("SELECT id FROM distribution_points WHERE id='$distro_id'");
+        if ($result->num_rows === 0) {
+            return array('error' => "Distribution point id not valid");
+        }
+
+        $result = $this->mysqli->query("UPDATE distribution_points SET deleted='1' WHERE id='$distro_id'");
+        if ($this->mysqli->error != "" || $result == false) {
+            return array('error' => "There was a problem deleting the item from the database<br />" . $this->mysqli->error);
+        }
+
+        return true;
+    }
+
     public function item_exists($name) {
         $name = preg_replace('/[^\w\s_-]/', '', $name);
         $result = $this->mysqli->query("SELECT id FROM distribution_items WHERE name='$name'");
@@ -326,6 +354,18 @@ class Distribution {
         $row = $result->fetch_array();
         if ($row) {
             return array('id' => $row['id'], 'name' => $name, 'regular' => $row['regular'], 'deleted' => $row['deleted']);
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function get_distribution_point_by_name($name) {
+        $name = preg_replace('/[^\w\s_-]/', '', $name);
+        $result = $this->mysqli->query("SELECT * FROM distribution_points WHERE name='$name'");
+        $row = $result->fetch_array();
+        if ($row) {
+            return array('id' => $row['id'], 'name' => $name, 'organizationid' => $row['organizationid'], 'deleted' => $row['deleted']);
         }
         else {
             return false;
@@ -399,7 +439,7 @@ class Distribution {
         $quantity = (int) $quantity;
         $itemid = (int) $itemid;
         $distributionid = (int) $distributionid;
-        $time =strtotime($date);
+        $time = strtotime($date);
         $date = date('Y-m-d', $time);
 
         // Save in database

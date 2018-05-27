@@ -74,7 +74,7 @@ MODALS
         $('#distribution-points').append('<h3>' + org.name + '</h3>');
         var html = '<select class="distribution-point" organization-id="' + org.id + '">';
         org.distribution_points.forEach(function (distro_point) {
-            html += '<option value="' + distro_point.id + '">' + distro_point.name + '</option>';
+            html += '<option value="' + distro_point.id + '">' + distro_point.name + (distro_point.deleted == 1 ? ' (deleted)' : '') + '</option>';
         });
         html += "</select>";
         html += '<button class="distribution-chosen" organization-id="' + org.id + '" disabled>Go</button>';
@@ -226,9 +226,9 @@ MODALS
     }
 
     // Development
-    setTimeout(function () {
-        $('#distribution-date').val('2018-05-22').change();
-        $('.distribution-chosen[organization-id="1"]').click();
-    }, 0);
+    /*setTimeout(function () {
+     $('#distribution-date').val('2018-05-22').change();
+     $('.distribution-chosen[organization-id="1"]').click();
+     }, 0);*/
 </script>
 

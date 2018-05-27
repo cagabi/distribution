@@ -82,7 +82,7 @@ MODALS
     </div>
 </div>
 
-<!-- Add distribution poin -->
+<!-- Add distribution point -->
 <div id="add-distribution-point-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="add-distribution-point-modal-label" aria-hidden="true" data-backdrop="static">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -100,6 +100,23 @@ MODALS
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
         <button id="add-distribution-point-action" class="btn btn-primary">Add</button>
+    </div>
+</div>
+
+
+<!-- Delete item -->
+<div id="delete-distribution-point-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="delete-distribution-point-modal-label" aria-hidden="true" data-backdrop="static">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="delete-distribution-point-modal-label">Delete distribution point</h3>
+    </div>
+    <div class="modal-body">
+        <p>Are you sure you want to delete the distribution point?</p>
+        <div class="alert alert-primary" id="delete-distribution-point-message" role="alert"></div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button id="delete-distribution-point-ok" class="btn btn-primary">Delete</button>
     </div>
 </div>
 
@@ -126,8 +143,7 @@ MODALS
         if (organizations === false) {
             $('#no-org-message').show();
             $('#add_user').hide();
-        }
-        else {
+        } else {
             $('#no-org-message').hide();
 
             // Show "Add user", "Add distribution" and more if there are more
@@ -150,12 +166,13 @@ MODALS
                 html += '<div orgid="' + org.id + '">';
                 html += '<h3>Distribution points</h3>'
                 html += '<table class="distribution-points table">';
-                if (org.distribution_points.length == 0)
+                if (distribution.any_active_distribution_point(org.distribution_points) == false)
                     html += '<tr><td colspan=3><div class="alert alert-primary"role="alert">There are no distribution points :(</div></td></tr>';
                 else {
                     html += '<tr><th>Name</th><th></th></tr>';
                     org.distribution_points.forEach(function (distr) {
-                        html += '<tr><td>' + distr.name + '</td><td>ToDo - delete and edit user</td></tr>';
+                        if (distr.deleted == 0)
+                            html += '<tr><td>' + distr.name + '</td><td><i class="icon-trash pointer" id="' + distr.id + '"></i>ToDo - edit distribution point</td></tr>';
                     });
                 }
                 html += '</table>';
@@ -250,6 +267,22 @@ MODALS
         var orgid = $(this).attr('orgid');
         $('div[orgid=' + orgid + ']').toggle();
         //$('table.users[orgid=' + orgid + ']').toggle();
+    });
+
+    $('#distribution').on('click', '.distribution-points .icon-trash', function () {
+        $('#delete-distribution-point-message').hide();
+        $('#delete-distribution-point-ok').attr('id', $(this).attr('id'));
+        $('#delete-distribution-point-modal').modal('show');
+    });
+
+    $('#delete-distribution-point-ok').on('click', function () {
+        var distroid = $(this).attr('id');
+        var result = distribution.delete_distribution_point(distroid);
+        if (result == true) {
+            update_view();
+            $('#delete-distribution-point-modal').modal('hide');
+        } else
+            $('#delete-distribution-point-message').html(result.error).show();
     });
 
     /*

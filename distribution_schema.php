@@ -13,6 +13,7 @@ $schema['distribution_points'] = array(
     'id' => array('type' => 'int(11)', 'Null' => false, 'Key' => 'PRI', 'Extra' => 'auto_increment'),
     'name' => array('type' => 'varchar(64)'),
     'organizationid' => array('type' => 'int(11)', 'Null' => false),
+    'deleted' => array('type' => 'tinyint(1)', 'Null' => false, 'default' => '0'),
 );
 $schema['distribution_items'] = array(
     'id' => array('type' => 'int(11)', 'Null' => false, 'Key' => 'PRI', 'Extra' => 'auto_increment'),

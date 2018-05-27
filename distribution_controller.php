@@ -123,6 +123,10 @@ function distribution_controller() {
             if ($role == Roles::SUPERADMINISTRATOR || ($role == Roles::ADMINISTRATOR && $distribution->user_is_in_organization($session['userid'], $organizationid)))
                 $result = $distribution->create_distribution_point(get('name'), get('organizationid'));
         }
+        if ($route->action == 'deletedistributionpoint') {
+            if ($role == Roles::SUPERADMINISTRATOR || ($role == Roles::ADMINISTRATOR && $distribution->user_is_in_organization($session['userid'], $organizationid)))
+                $result = $distribution->delete_distribution_point(get('distributionid'));
+        }
 
         // Items
         if ($route->action == 'getitems') {

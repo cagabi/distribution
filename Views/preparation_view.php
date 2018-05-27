@@ -73,11 +73,15 @@ MODALS
 
     // Add distribution points
     organizations.forEach(function (org) {
-        $('#distribution-points').append('<h3>' + org.name + '</h3>');
-        org.distribution_points.forEach(function (distro_point) {
-            var html = '<p class="distribution-point" distribution_id="' + distro_point.id + '" organization_id="' + org.id + '" name="' + distro_point.name + '" organization="' + org.name + '">' + distro_point.name + '</p>';
-            $('#distribution-points').append(html);
-        });
+        if (distribution.any_active_distribution_point(org.distribution_points) == true) {
+            $('#distribution-points').append('<h3>' + org.name + '</h3>');
+            org.distribution_points.forEach(function (distro_point) {
+                if (distro_point.deleted == 0) {
+                    var html = '<p class="distribution-point" distribution_id="' + distro_point.id + '" organization_id="' + org.id + '" name="' + distro_point.name + '" organization="' + org.name + '">' + distro_point.name + '</p>';
+                    $('#distribution-points').append(html);
+                }
+            });
+        }
     });
     // Show Step 1 - Choose distribution point
     $('#step1').show();
