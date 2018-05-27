@@ -83,12 +83,6 @@ MODALS
     $('#step1').show();
     $('#step2').hide();
 
-    // Development
-    /*setTimeout(function () {
-     $('#distribution-date').val('2018-05-12').change();
-     $('.distribution-chosen[organization-id="1"]').click();
-     }, 0);*/
-
     /*******************
      * Actions
      *******************/
@@ -166,7 +160,8 @@ MODALS
         // Variables used
         var sorted_dates = []; // used to sort the week preparation
         var week_items = [];
-        // Fetch a week distributions
+        var items_sorted = distribution.sort_items(items);
+        // Fetch all the items distributedd in the week
         for (var date in week_preparation) {
             for (var itemid in week_preparation[date])
                 if (week_items.indexOf(itemid) == -1) {
@@ -194,27 +189,32 @@ MODALS
                 html += '<th>' + date_obj.toString().substr(0, 15) + '</th>';
         });
         html += '</tr>';
-        week_items.forEach(function (itemid) {
-            html += '<tr class="item" itemid="' + itemid + '"><td>' + items[itemid].name + '</td>';
-            sorted_dates.forEach(function (date) {
-                var date_obj = new Date(date);
-                var today = (new Date());
-                if (date_obj < today.setDate(today.getDate() - 1)) {
-                    if (week_preparation[date][itemid] == undefined)
-                        html += '<td><input type="number" class="item-quantity" item-id="' + itemid + '" date="' + date + '" min=0 value=0></input></td>';
-                    else
-                        html += '<td><input type="number" class="item-quantity" item-id="' + itemid + '" date="' + date + '" min=0 value=' + week_preparation[date][itemid].quantity + '></input></td>';
-                }
-            });
-            html += '</tr>';
+        console.log(items_sorted)
+        console.log(week_items)
+        items_sorted.forEach(function (item) {
+            var itemid = item.id;
+            if (week_items.indexOf(itemid) != -1) {
+                html += '<tr class="item" itemid="' + itemid + '"><td>' + items[itemid].name + '</td>';
+                sorted_dates.forEach(function (date) {
+                    var date_obj = new Date(date);
+                    var today = (new Date());
+                    if (date_obj < today.setDate(today.getDate() - 1)) {
+                        if (week_preparation[date][itemid] == undefined)
+                            html += '<td><input type="number" class="item-quantity" item-id="' + itemid + '" date="' + date + '" min=0 value=0></input></td>';
+                        else
+                            html += '<td><input type="number" class="item-quantity" item-id="' + itemid + '" date="' + date + '" min=0 value=' + week_preparation[date][itemid].quantity + '></input></td>';
+                    }
+                });
+                html += '</tr>';
+            }
         });
         $('table#distributions').html(html);
     }
-    /*
-     $('#preparation').on('click', '', function(){
-     
-     })
-     * 
-     */
+
+    // Development
+    /*setTimeout(function () {
+        $('#distribution-date').val('2018-05-22').change();
+        $('.distribution-chosen[organization-id="1"]').click();
+    }, 0);*/
 </script>
 
