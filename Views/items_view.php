@@ -142,7 +142,7 @@ MODALS
         var out = '';
         var sorted_items = distribution.sort_items(items);
         for (var i in sorted_items) {
-            out = '<tr class="item"><td>' + sorted_items[i].name + '</td><td><i class="icon-trash pointer" id=' + sorted_items[i].itemid + ' /></td></tr>';
+            out = '<tr class="item"><td>' + sorted_items[i].name + '</td><td><i class="icon-trash pointer" id=' + sorted_items[i].id + ' /></td></tr>';
             if (sorted_items[i].regular == 1)
                 $('#regular-items').append(out);
             else
