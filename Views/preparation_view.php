@@ -53,8 +53,33 @@ MODALS
         <div id="edit-items-non-regular" style="margin-left:25px"></div>
     </div>
     <div class="modal-footer">
+        <button id="create-item" class="btn" style="margin-right:15px">Create item</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
         <button id="edit-items-ok" class="btn btn-primary">Ok</button>
+    </div>
+</div>
+
+<!-- Add item -->
+<div id="add-item-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="add-item-modal-label" aria-hidden="true" data-backdrop="static">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="add-item-modal-label">Add new item</h3>
+    </div>
+    <div class="modal-body">
+        <p>Name:<br>
+            <input id="add-item-name" type="text" maxlength="64">
+        </p>
+        <p>Type:<br>
+            <select id="add-item-type" type="text" maxlength="64">
+                <option value="regular">Regular</option>
+                <option value="non-regular">Non-regular</option>
+            </select>
+        </p>
+        <div class="alert alert-primary" id="add-item-message" role="alert"></div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button id="add-item-ok" class="btn btn-primary">Add</button>
     </div>
 </div>
 
@@ -87,11 +112,6 @@ MODALS
     $('#step1').show();
     $('#step2').hide();
 
-    // Development
-    /*setTimeout(function () {
-     $('p[distribution_id=1]').click();
-     $('#edit-items').click();
-     }, 0);*/
 
     /*******************
      * Actions
@@ -156,8 +176,26 @@ MODALS
             }
         });
         draw_preparation_table();
-        ;
         $('#edit-items-modal').modal('hide')
+    });
+    $('#create-item').on('click', function () {
+        $('#add-item-message').hide();
+        $('#edit-items-modal').modal('hide');
+        $('#add-item-modal').modal('show');
+    });
+    $('#add-item-ok').on('click', function () {
+        $('#add-item-message').hide();
+        var name = $('#add-item-name').val();
+        var type = $('#add-item-type').val() == 'regular' ? 'regular' : 'non_regular';
+        var regular = $('#add-item-type').val() == 'regular' ? 1 : 0;
+        var item_id = distribution.create_item(name, regular);
+        if (item_id.error != undefined)
+            $('#add-item-message').html(item_id.error).show();
+        else {
+            items[item_id] = {id: item_id, name: name, regular: regular};
+            $('#add-item-modal').modal('hide');
+            $('#edit-items').click();
+        }
     });
 
 
@@ -246,11 +284,12 @@ MODALS
         });
         $('table#last-week-distribution').html(html);
     }
-    /*
-     $('#preparation').on('click', '', function(){
-     
-     })
-     * 
-     */
+
+    // Development
+    /*setTimeout(function () {
+        $('p[distribution_id=1]').click();
+        $('#edit-items').click();
+        $('#create-item').click();
+    }, 0);*/
 </script>
 

@@ -86,9 +86,6 @@ MODALS
 
     update_view();
 
-    // Development
-
-
     /*******************
      * Actions
      *******************/
@@ -107,7 +104,7 @@ MODALS
         if (item_id.error != undefined)
             $('#add-item-message').html(item_id.error).show();
         else {
-            items[item_id] = {id: item_id, name: name, regular: regular}
+            items[item_id] = {id: item_id, name: name, regular: regular};
             update_view();
             $('#add-item-modal').modal('hide');
         }
@@ -164,5 +161,8 @@ MODALS
             $('#non-regular-items').hide();
         }
     }
+
+    // Development
+    
 </script>
 
