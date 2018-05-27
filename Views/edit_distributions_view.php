@@ -111,7 +111,7 @@ MODALS
             if (distr.id == distributionid)
                 distr_index = index;
         });
-        $('#distribution-name').html(organizations[org_index].distribution_points[distributionid].name);
+        $('#distribution-name').html(organizations[org_index].distribution_points[distr_index].name);
 
         // Show Step 2 - Choose distribution point
         $('#step1').hide();
