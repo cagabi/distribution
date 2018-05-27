@@ -210,7 +210,7 @@ class Distribution {
         if ($name != $name2) {
             return (array('error' => "Name contains invalid characters. <br />You can only use numbers, letters and blank spaces"));
         }
-        
+
         if ($this->distribution_point_exists($name)) {
             $distr_point = $this->get_distribution_point_by_name($name);
             if ($distr_point['deleted'] == 0) // The item is active
@@ -253,10 +253,10 @@ class Distribution {
      * @return array of items: array('id' => $row['id'], 'name' => $row['name'], 'regular' => $row['regular']);
      */
     public function get_items() {
-        $result = $this->mysqli->query('SELECT id, name, regular FROM distribution_items');
+        $result = $this->mysqli->query('SELECT id, name, deleted, regular  FROM distribution_items');
         $items = array();
         while ($row = $result->fetch_array()) {
-            $items[] = array('id' => $row['id'], 'name' => $row['name'], 'regular' => $row['regular']);
+            $items[] = array('id' => $row['id'], 'name' => $row['name'], 'regular' => $row['regular'], 'deleted' => $row['deleted']);
         }
         return $items;
     }

@@ -203,12 +203,10 @@ MODALS
                 html += '<th>' + date_obj.toString().substr(0, 15) + '</th>';
         });
         html += '</tr>';
-        console.log(items_sorted)
-        console.log(week_items)
         items_sorted.forEach(function (item) {
             var itemid = item.id;
             if (week_items.indexOf(itemid) != -1) {
-                html += '<tr class="item" itemid="' + itemid + '"><td>' + items[itemid].name + '</td>';
+                html += '<tr class="item" itemid="' + itemid + '"><td>' + items[itemid].name + (items[itemid].deleted == 1 ? ' (deleted)' : '') + '</td>';
                 sorted_dates.forEach(function (date) {
                     var date_obj = new Date(date);
                     var today = (new Date());
