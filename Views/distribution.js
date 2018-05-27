@@ -62,7 +62,12 @@ var distribution = {
     'get_yesterday_preparation': function (distributionid) {
         var result = {};
         $.ajax({url: path + "distribution/getyesterdaypreparation.json?distributionid=" + distributionid, dataType: 'json', async: false, success: function (data) {
-                result = data;
+                var items = {};
+                data.forEach(function (item) {
+                    items[item.itemid] = item;
+                });
+                result = items;
+                //result = data;
             }});
         return result;
     },

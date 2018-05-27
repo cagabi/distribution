@@ -147,7 +147,7 @@ MODALS
             var item_id = $(this).attr('item-id');
             var a = $('.item[itemid=' + item_id + ']');
             if ($('.item[itemid=' + item_id + ']').length == 0) {
-                yesterday_preparation.push({itemid: item_id, quantity_out: 0, quantity_returned: 0});
+                yesterday_preparation[item_id]({itemid: item_id, quantity_out: 0, quantity_returned: 0});
                 today_preparation[item_id] = {itemid: item_id, quantity_out: 0, quantity_returned: 0};
             }
         });
@@ -181,39 +181,34 @@ MODALS
         $('#preparation-regular-items').html('<tr><th>Item</th><th>Out yesterday</th><th>Returned from yesterday</th><th>Out today</th></tr>');
         $('#preparation-non-regular-items').html('<tr><th>Item</th><th>Out yesterday</th><th>Returned from yesterday</th><th>Out today</th></tr>');
 
-        for (var item in yesterday_preparation) {
-            var itemid = 1.0 * yesterday_preparation[item].itemid;
-            if (items[itemid] != undefined) {
-                var type = items[itemid].regular != 0 ? 'regular' : 'non-regular';
-                var html = '<tr itemid=' + itemid + '>';
-                html += '<td>' + items[itemid].name + '</td>';
-                if (yesterday_preparation[item].quantity_out == undefined)
-                    yesterday_preparation[item].quantity_out = 0;
-                html += '<td>' + yesterday_preparation[item].quantity_out + '</td>';
-                html += '<td><input type="number" source="yesterday-returned-item" itemid=' + itemid + ' class="item" min=0 value=' + yesterday_preparation[item].quantity_returned + ' /></td>';
-                if (today_preparation[itemid] == undefined)
-                    html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' class="item" min=0 value="" /></td>';
-                else
-                    html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' min=0 value=' + today_preparation[itemid].quantity_out + ' /></td>';
-                html += '</tr>';
-                $('#preparation-' + type + '-items').append(html);
-            }
-        }
-        for (var item in today_preparation) {
-            var itemid = 1.0 * today_preparation[item].itemid;
-            if ($('[source="today-preparation-item"][itemid=' + itemid + ']').length == 0) {
+        sorted_items.forEach(function (item) {
+            if (yesterday_preparation[item.id] != undefined || today_preparation[item.id] != undefined) {
+                var itemid = 1.0 * item.id;
                 if (items[itemid] != undefined) {
                     var type = items[itemid].regular != 0 ? 'regular' : 'non-regular';
                     var html = '<tr itemid=' + itemid + '>';
+
+                    // Add item to yesterday columns
                     html += '<td>' + items[itemid].name + '</td>';
-                    html += '<td>0</td>';
-                    html += '<td><input type="number" source="yesterday-returned-item" itemid=' + itemid + ' class="item" min=0 value=0 /></td>';
-                    html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' min=0 value=' + today_preparation[itemid].quantity_out + ' /></td>';
+                    if (yesterday_preparation[itemid] == undefined) {
+                        html += '<td>0</td>';
+                        html += '<td><input type="number" source="yesterday-preparation-item" itemid=' + itemid + ' class="item" min=0 value="0" /></td>';
+
+                    } else {
+                        html += '<td>' + yesterday_preparation[itemid].quantity_out + '</td>;'
+                        html += '<td><input type="number" source="yesterday-preparation-item" itemid=' + itemid + ' min=0 value=' + yesterday_preparation[itemid].quantity_returned + ' /></td>';
+                    }
+
+                    // Add item to today columns
+                    if (today_preparation[itemid] == undefined)
+                        html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' class="item" min=0 value="0" /></td>';
+                    else
+                        html += '<td><input type="number" source="today-preparation-item" itemid=' + itemid + ' min=0 value=' + today_preparation[itemid].quantity_out + ' /></td>';
                     html += '</tr>';
                     $('#preparation-' + type + '-items').append(html);
                 }
             }
-        }
+        });
     }
 
     function draw_last_week_preparation_table() {
