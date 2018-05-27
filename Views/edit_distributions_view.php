@@ -21,6 +21,7 @@ bind_textdomain_codeset($domain2, 'UTF-8');
                 <div id="distribution-points"></div>
             </div>
             <div id="step2" style="display:none">
+                <h2 id="distribution-name"></h2>
                 <div id="actions" style="margin-top:15px">
                     <div id="edit-items"><i class="icon-plus add-button"></i>Add item</div>
                     <div id="step-backward"><i class="icon-step-backward add-button"></i></div>
@@ -98,6 +99,19 @@ MODALS
         date_selected = $('#distribution-date').val();
         week_preparation = distribution.get_week_preparation(distributionid, date_selected);
         draw_preparation_table();
+
+        // Add distribution name to title
+        var org_index = 0;
+        var distr_index = 0;
+        organizations.forEach(function (org, index) {
+            if (org.id == organizationid)
+                org_index = index;
+        });
+        organizations[org_index].distribution_points.forEach(function (distr, index) {
+            if (distr.id == distributionid)
+                distr_index = index;
+        });
+        $('#distribution-name').html(organizations[org_index].distribution_points[distributionid].name);
 
         // Show Step 2 - Choose distribution point
         $('#step1').hide();
@@ -212,9 +226,9 @@ MODALS
     }
 
     // Development
-    /*setTimeout(function () {
+    setTimeout(function () {
         $('#distribution-date').val('2018-05-22').change();
         $('.distribution-chosen[organization-id="1"]').click();
-    }, 0);*/
+    }, 0);
 </script>
 
