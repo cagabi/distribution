@@ -161,9 +161,9 @@ var distribution = {
             sorted_items.push(items[i]);
         sorted_items.sort(function (a, b) {
             if (a.name.toUpperCase() > b.name.toUpperCase())
-                return true;
+                return 1;
             else
-                return false;
+                return -1;
         });
         return sorted_items;
     },
