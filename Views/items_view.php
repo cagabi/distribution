@@ -96,6 +96,7 @@ MODALS
         $('#add-item-name').val('');
         $('#add-item-message').hide();
         $('#add-item-modal').modal('show');
+        $('#add-item-name').focus();
     });
     $('#add-item-ok').on('click', function () {
         $('#add-item-message').hide();
