@@ -140,7 +140,7 @@ MODALS
         $('#step2').show();
     });
 
-    $('#preparation').on('change', 'input', function () {
+    $('#preparation').on('change keypress', 'input', function () {
         if ($(this).attr('source') == 'yesterday-returned-item')
             var result = distribution.save_returned_item($(this).val(), $(this).attr('itemid'), distributionid);
         else
@@ -150,6 +150,24 @@ MODALS
             window.alert('There was a problem saving your last change');
         }
     });
+    /*$('#preparation').on('keypress', function () {
+        $('#preparation input').each(function () {
+            console.log($(this))
+            console.log($(this).is(':focus'));
+            if ($(this).is(':focus') == true)
+                var input = $(this);
+        });
+        if (input != undefined) {
+            if ($(this).attr('source') == 'yesterday-returned-item')
+                var result = distribution.save_returned_item($(this).val(), $(this).attr('itemid'), distributionid);
+            else
+                var result = distribution.save_going_out_item($(this).val(), $(this).attr('itemid'), distributionid);
+            if (result === false) {
+                $(this).val('');
+                window.alert('There was a problem saving your last change');
+            }
+        }
+    });*/
     $('#preparation').on('click', '#edit-items', function () {
         var items_not_deleted = distribution.get_items_not_deleted();
         var sorted_items_not_deleted = distribution.sort_items(items_not_deleted);
@@ -286,10 +304,10 @@ MODALS
     }
 
     // Development
-    /*setTimeout(function () {
-     $('p[distribution_id=1]').click();
-     $('#edit-items').click();
-     $('#create-item').click();
-     }, 0);*/
+    setTimeout(function () {
+        $('p[distribution_id=1]').click();
+        //$('#edit-items').click();
+        //$('#create-item').click();
+    }, 0);
 </script>
 
