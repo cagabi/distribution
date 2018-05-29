@@ -221,6 +221,8 @@ MODALS
                     $('[source="today-preparation-item"][itemid="' + today_preparation[item].itemid + '"]').val(today_preparation[item].quantity_out);
             }
         }
+        // Last week distributions
+        draw_last_week_preparation_table();
     }
 
     function draw_preparation_table() {
