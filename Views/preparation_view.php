@@ -209,13 +209,17 @@ MODALS
         today_preparation = distribution.get_today_preparation(distributionid);
         // Update view yesterday_preparation
         for (var item in yesterday_preparation) {
-            if (yesterday_preparation[item].quantity_returned != $('[source="yesterday-preparation-item"][itemid="' + yesterday_preparation[item].itemid + '"]').val())
-                $('[source="yesterday-preparation-item"][itemid="' + yesterday_preparation[item].itemid + '"]').val(yesterday_preparation[item].quantity_returned);
+            if ($('[source="yesterday-preparation-item"][itemid="' + yesterday_preparation[item].itemid + '"]').is(':focus') == false) {
+                if (yesterday_preparation[item].quantity_returned != $('[source="yesterday-preparation-item"][itemid="' + yesterday_preparation[item].itemid + '"]').val())
+                    $('[source="yesterday-preparation-item"][itemid="' + yesterday_preparation[item].itemid + '"]').val(yesterday_preparation[item].quantity_returned);
+            }
         }
         // Update view today preparatioin
         for (var item in today_preparation) {
-            if (today_preparation[item].quantity_out != $('[source="today-preparation-item"][itemid="' + today_preparation[item].itemid + '"]').val())
-                $('[source="today-preparation-item"][itemid="' + today_preparation[item].itemid + '"]').val(today_preparation[item].quantity_out);
+            if ($('[source="today-preparation-item"][itemid="' + today_preparation[item].itemid + '"]').is(':focus ') == false) {
+                if (today_preparation[item].quantity_out != $('[source="today-preparation-item"][itemid="' + today_preparation[item].itemid + '"]').val())
+                    $('[source="today-preparation-item"][itemid="' + today_preparation[item].itemid + '"]').val(today_preparation[item].quantity_out);
+            }
         }
     }
 
