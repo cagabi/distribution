@@ -145,7 +145,7 @@ MODALS
         draw_preparation_table();
         $('#edit-items-modal').modal('hide')
     });
-    $('#edit_distributions').on('change', '.item-quantity', function () {
+    $('#edit_distributions').on('change keypress', '.item-quantity', function () {
         distribution.save_distributed_item($(this).val(), $(this).attr('item-id'), distributionid, $(this).attr('date'));
     });
     $('#edit_distributions').on('click', '#step-backward', function () {
