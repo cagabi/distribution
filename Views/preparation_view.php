@@ -141,7 +141,7 @@ MODALS
     });
 
     $('#preparation').on('change keypress', 'input', function () {
-        if ($(this).attr('source') == 'yesterday-returned-item')
+        if ($(this).attr('source') == 'yesterday-preparation-item')
             var result = distribution.save_returned_item($(this).val(), $(this).attr('itemid'), distributionid);
         else
             var result = distribution.save_going_out_item($(this).val(), $(this).attr('itemid'), distributionid);
@@ -150,24 +150,6 @@ MODALS
             window.alert('There was a problem saving your last change');
         }
     });
-    /*$('#preparation').on('keypress', function () {
-        $('#preparation input').each(function () {
-            console.log($(this))
-            console.log($(this).is(':focus'));
-            if ($(this).is(':focus') == true)
-                var input = $(this);
-        });
-        if (input != undefined) {
-            if ($(this).attr('source') == 'yesterday-returned-item')
-                var result = distribution.save_returned_item($(this).val(), $(this).attr('itemid'), distributionid);
-            else
-                var result = distribution.save_going_out_item($(this).val(), $(this).attr('itemid'), distributionid);
-            if (result === false) {
-                $(this).val('');
-                window.alert('There was a problem saving your last change');
-            }
-        }
-    });*/
     $('#preparation').on('click', '#edit-items', function () {
         var items_not_deleted = distribution.get_items_not_deleted();
         var sorted_items_not_deleted = distribution.sort_items(items_not_deleted);
@@ -227,8 +209,8 @@ MODALS
         today_preparation = distribution.get_today_preparation(distributionid);
         // Update view yesterday_preparation
         for (var item in yesterday_preparation) {
-            if (yesterday_preparation[item].quantity_returned != $('[source="yesterday-returned-item"][itemid="' + yesterday_preparation[item].itemid + '"]').val())
-                $('[source="yesterday-returned-item"][itemid="' + yesterday_preparation[item].itemid + '"]').val(yesterday_preparation[item].quantity_returned);
+            if (yesterday_preparation[item].quantity_returned != $('[source="yesterday-preparation-item"][itemid="' + yesterday_preparation[item].itemid + '"]').val())
+                $('[source="yesterday-preparation-item"][itemid="' + yesterday_preparation[item].itemid + '"]').val(yesterday_preparation[item].quantity_returned);
         }
         // Update view today preparatioin
         for (var item in today_preparation) {
@@ -255,7 +237,7 @@ MODALS
                         html += '<td><input type="number" source="yesterday-preparation-item" itemid=' + itemid + ' class="item" min=0 value="0" /></td>';
 
                     } else {
-                        html += '<td>' + yesterday_preparation[itemid].quantity_out + '</td>;'
+                        html += '<td>' + (yesterday_preparation[itemid].quantity_out != undefined ? yesterday_preparation[itemid].quantity_out : 0) + '</td>;'
                         html += '<td><input type="number" source="yesterday-preparation-item" itemid=' + itemid + ' min=0 value=' + yesterday_preparation[itemid].quantity_returned + ' /></td>';
                     }
 
