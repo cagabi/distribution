@@ -171,7 +171,7 @@ MODALS
             var item_id = $(this).attr('item-id');
             var a = $('.item[itemid=' + item_id + ']');
             if ($('.item[itemid=' + item_id + ']').length == 0) {
-                yesterday_preparation[item_id]({itemid: item_id, quantity_out: 0, quantity_returned: 0});
+                yesterday_preparation[item_id] = {itemid: item_id, quantity_out: 0, quantity_returned: 0};
                 today_preparation[item_id] = {itemid: item_id, quantity_out: 0, quantity_returned: 0};
             }
         });
@@ -287,9 +287,9 @@ MODALS
 
     // Development
     /*setTimeout(function () {
-        $('p[distribution_id=1]').click();
-        $('#edit-items').click();
-        $('#create-item').click();
-    }, 0);*/
+     $('p[distribution_id=1]').click();
+     $('#edit-items').click();
+     $('#create-item').click();
+     }, 0);*/
 </script>
 
